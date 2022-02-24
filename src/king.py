@@ -3,10 +3,10 @@ import numpy as np
 
 class King():
     
-    def __init__(self):
+    def __init__(self, x, y):
         self.king_color = Back.RED+' '+Style.RESET_ALL
-        self.x = 0
-        self.y = 0
+        self.x = x
+        self.y = y
         self.alive = False
 
     def move(self, key):

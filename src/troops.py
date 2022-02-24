@@ -1,14 +1,24 @@
+from operator import le
 from colorama import Fore, Style, Back
 import numpy as np
 
 class Troops():
 
-    def __init__(self):
+    def __init__(self,start,end):
         self.troops_color = Back.MAGENTA+' '+Style.RESET_ALL
         self.x = np.zeros((10), type(int))
         self.y = np.zeros((10), type(int))
         self.alive = np.zeros((10), type(int))
         self.count = 0
+        self.initialize(start,end)
+
+    def initialize(self,start,end):
+        """Initializing troops."""
+        length = 2
+        for i in range(10):
+            if self.alive[i] == 0:
+                self.x[i] = start + i*length + 3*length
+                self.y[i] = 11
 
     def spawn(self, key):
         """Spawning troops."""
