@@ -30,9 +30,9 @@ class Village():
         """Getting key from user."""
         key = input_to(self.getch)
         
-        if(key == 'b' and self.king.alive == False):
+        if(key == 'b' and self.king.status == 0):
             self.king.spawn()
-        if(key == 'w' or 'a' or 's' or 'd' or 'space' and self.king.alive == True):
+        if(key == 'w' or 'a' or 's' or 'd' or 'space' and self.king.status == 1):
             self.king.move(key)
         if(key == 'i' or 'j' or 'k' and self.troops.count < 10):
             self.troops.spawn(key)
@@ -75,17 +75,18 @@ class Village():
         for i in range(troop_king_len):
             self.village[troop_king_y][troop_king_x+i] = Back.BLACK+Fore.YELLOW+troop_king[i]+Style.RESET_ALL
 
+        if self.king.status == 0:
+            self.village[self.king.y][self.king.x] = self.king.king_color
+
         troop_barb = "--Barb--"
         troop_barb_len = len(troop_barb)
         troop_barb_x = (self.cols+self.troops_spells_cols - troop_king_len -7*length)
         troop_barb_y = 9
         for i in range(troop_barb_len):
             self.village[troop_barb_y][troop_barb_x+i] = Back.BLACK+Fore.YELLOW+troop_barb[i]+Style.RESET_ALL        
-
-        self.village[self.king.y][self.king.x] = self.king.king_color
         
         for counter in range(10):
-            if self.troops.alive[counter] == 0:
+            if self.troops.status[counter] == 0:
                 self.village[self.troops.y[counter]][self.troops.x[counter]] = self.troops.troops_color
 
         print('\n'.join([''.join(row) for row in self.village]))

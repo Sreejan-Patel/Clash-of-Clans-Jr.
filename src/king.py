@@ -7,7 +7,7 @@ class King():
         self.king_color = Back.RED+' '+Style.RESET_ALL
         self.x = x
         self.y = y
-        self.alive = False
+        self.status = 0
 
     def move(self, key):
         """Moving king."""
@@ -26,7 +26,7 @@ class King():
 
     def spawn(self):
         """Spawning king."""
-        self.alive = True
+        self.status = 1
         self.x = 5
         self.y = 5
         
