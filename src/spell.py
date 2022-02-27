@@ -6,7 +6,7 @@ class Spell():
         self.rage_color = Back.BLUE+' '+Style.RESET_ALL
         self.status_rage = 0
         
-        self.heal_color = Back.WHITE+' '+Style.RESET_ALL
+        self.heal_color = Back.YELLOW+' '+Style.RESET_ALL
         self.status_heal = 0
 
 class Rage(Spell):
