@@ -4,6 +4,7 @@ from src.king import King
 from src.troops import Troops
 from src.spell import Heal, Rage
 from src.building import Hut, Cannon, TownHall
+from src.walls import Walls
 import numpy as np
 import os
 
@@ -30,6 +31,7 @@ class Village():
         self.th = TownHall()
         self.huts = Hut()
         self.cannons = Cannon()
+        self.walls = Walls()
 
         self.render()
 
@@ -72,6 +74,17 @@ class Village():
             for row in range(self.huts.y[i],self.huts.y[i]+self.huts.height):
                 for col in range(self.huts.x[i],self.huts.x[i]+self.huts.width):
                     self.village[row][col] = self.huts.health_check(i)
+        
+        # render Cannons
+        for i in range(2):
+            for row in range(self.cannons.y[i],self.cannons.y[i]+self.cannons.height):
+                for col in range(self.cannons.x[i],self.cannons.x[i]+self.cannons.width):
+                    self.village[row][col] = self.cannons.health_check(i)
+
+        # render walls
+        for i in range(114):
+            self.village[self.walls.y[i]][self.walls.x[i]] = self.walls.wall_color
+
 
         # render Troops
         length = 1

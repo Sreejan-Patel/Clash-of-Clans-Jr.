@@ -10,6 +10,7 @@ class Troops():
         self.y = np.zeros((10), type(int))
         self.status = np.zeros((10), type(int))
         self.count = 0
+        self.damage = 10
         self.initialize(start,end)
 
     def initialize(self,start,end):

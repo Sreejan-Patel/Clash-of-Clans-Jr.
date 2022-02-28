@@ -7,7 +7,7 @@ class King():
         self.king_color = Back.RED+' '+Style.RESET_ALL
         self.x = x
         self.y = y
-        self.king_movement_speed = 2            # 2 blocks per command
+        self.king_movement_speed = 1            # 1 blocks per command
         
         self.status = 0                         # status = 0 => not spawned
                                                 # status = 1 => spawned
@@ -15,7 +15,7 @@ class King():
 
         self.king_health = 100                  # health of the king
 
-        self.king_attack_damage = 10            # damage per each attack
+        self.king_attack_damage = 20            # damage per each attack
 
 
 

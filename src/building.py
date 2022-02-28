@@ -15,7 +15,7 @@ class Hut(Building):
         Building.__init__(self)
         self.height = 1
         self.width = 1
-        self.health = np.full((5), 20)
+        self.health = np.full((5), 30)
         self.y = np.full((5), 0)
         self.x = np.full((5), 0)
         self.initialize_huts()
@@ -57,9 +57,21 @@ class Cannon(Building):
         Building.__init__(self)
         self.height = 2
         self.width = 3
-        self.health = np.full((2), 50)
+        self.health = np.full((2), 100)
+        self.y = np.full((2), 0)
+        self.x = np.full((2), 0)
+        self.initialize_cannons()
 
-        
+    def initialize_cannons(self):
+        '''
+        This function initializes the huts
+        '''
+        self.y[0] = 20
+        self.x[0] = 23
+
+        self.y[1] = 20
+        self.x[1] = 55
+
     def health_check(self, i):
         '''
         This function checks the health of the hut and returns the color of the building
@@ -77,7 +89,7 @@ class TownHall(Building):
         Building.__init__(self)
         self.height = 4
         self.width = 3
-        self.health = np.full((1), 100)
+        self.health = np.full((1), 150)
         self.x = 39
         self.y = 19
 
