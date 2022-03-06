@@ -36,6 +36,7 @@ class Village():
         self.th = TownHall()
         self.huts = Hut()
         self.cannons = Cannon()
+        self.cannon_attack = [-1,-1]
         self.walls = Walls()
 
         self.start_time = time.time()
@@ -100,12 +101,51 @@ class Village():
             for row in range(self.huts.y[i],self.huts.y[i]+self.huts.height):
                 for col in range(self.huts.x[i],self.huts.x[i]+self.huts.width):
                     self.village[row][col] = self.huts.health_check(i)
-        
+
+        # Cannon attack
+        for i in range(2):
+            king_dist = 100
+            if self.king.status == 1:
+                king_dist = self.cannons.euclidean_distance(self.king.y,self.king.x,i)
+                if king_dist <= self.cannons.range:
+                    if self.cannon_attack[i] == -1 or 69:
+                        self.king.king_health -= self.cannons.damage
+                        if self.king.king_health <= 0:
+                            self.king.status = 2
+                            self.cannon_attack[i] = -1
+                    else:
+                        self.cannon_attack[i] == -1
+                else:
+                    self.cannon_attack[i] = -1
+            
+            troop_dist = np.full((10),100)
+            for j in range(10):
+
+                if self.troops.status[j] == 1:
+                    troop_dist[j] = self.cannons.euclidean_distance(self.troops.y[j],self.troops.x[j],i)
+                    if troop_dist[j] <= self.cannons.range:
+                        if self.cannon_attack[i] == -1 or self.troops.troop[j]:
+                            self.troops.health[j] -= self.cannons.damage
+                            if self.troops.health[j] <= 0:
+                                self.cannon_attack[i] = -1
+                        else:
+                            self.cannon_attack[i] = -1
+                    else:
+                        self.cannon_attack[i] = -1
+
+            if self.cannon_attack[i] == -1:
+                if min(troop_dist) < king_dist:
+                    self.cannon_attack[i] = self.troops.troop[troop_dist.index(min(troop_dist))]
+                else:
+                    self.cannon_attack[i] = 69
+                    
         # render Cannons
         for i in range(2):
             for row in range(self.cannons.y[i],self.cannons.y[i]+self.cannons.height):
                 for col in range(self.cannons.x[i],self.cannons.x[i]+self.cannons.width):
                     self.village[row][col] = self.cannons.health_check(i)
+        
+        
 
         # render walls
         for i in range(114):

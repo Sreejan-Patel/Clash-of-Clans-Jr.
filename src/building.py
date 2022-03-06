@@ -1,5 +1,6 @@
 from colorama import Fore , Back , Style
 import numpy as np
+import math
 
 class Building():
 
@@ -80,6 +81,8 @@ class Cannon(Building):
         self.y = np.full((2), 0)
         self.x = np.full((2), 0)
         self.initialize_cannons()
+        self.damage = 10
+        self.range = 6
 
     def initialize_cannons(self):
         '''
@@ -120,6 +123,13 @@ class Cannon(Building):
         This function decreases the health of the cannon by damage
         '''
         self.health[i] -= damage
+
+    def euclidean_distance(self, y1, x1,i):
+        '''
+        This function calculates the euclidean distance between two points
+        '''
+        return math.sqrt((y1-self.y[i])**2 + (x1-self.x[i])**2)
+
 class TownHall(Building):
 
     def __init__(self):
