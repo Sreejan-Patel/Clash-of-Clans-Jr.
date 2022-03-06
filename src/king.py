@@ -8,6 +8,8 @@ class King():
     
     def __init__(self, x, y):
         self.king_color = Back.RED+' '+Style.RESET_ALL
+        self.king_light_color = Back.LIGHTRED_EX+' '+Style.RESET_ALL
+        self.king_dead_color = Back.LIGHTBLACK_EX+' '+Style.RESET_ALL
         self.x = x
         self.y = y
         self.king_movement_speed = 1            # 1 blocks per command
@@ -115,7 +117,12 @@ class King():
         elif th_l != -1 or th_r != -1 or th_u != -1 or th_d != -1:
             th.health_decrease(self.king_attack_damage)
         
-
+    def health_check(self):
+        """Checking health."""
+        if self.king_health <= 0:
+            self.status = 2
+            return 
+        
 
     def health_decrease(self, damage):
         """Decrease king's health"""

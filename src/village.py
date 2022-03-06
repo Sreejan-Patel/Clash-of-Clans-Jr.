@@ -7,6 +7,8 @@ from src.spell import Heal, Rage
 from src.building import Hut, Cannon, TownHall
 from src.walls import Walls
 import numpy as np
+import math
+import time 
 import os
 
 class Village():
@@ -25,13 +27,22 @@ class Village():
 
         self.king = King(self.cols+self.troops_spells_cols - 11,7)
         self.troops = Troops(self.cols,self.cols+self.troops_spells_cols)
+
         self.rage = Rage(self.cols+self.troops_spells_cols - 11,19)
+        self.rage_time = 0
         self.heal = Heal(self.cols+self.troops_spells_cols - 11,23)
+        self.heal_time = 0
 
         self.th = TownHall()
         self.huts = Hut()
         self.cannons = Cannon()
         self.walls = Walls()
+
+        self.start_time = time.time()
+        self.current_time = time.time()
+        self.time_elapsed = 0
+
+        self.game_over = False
         
 
         self.render()
@@ -55,9 +66,9 @@ class Village():
                 self.troops.spawn(key)
             else:
                 pass
-        if(key == 'r' ):
+        if(key == 'r' and self.rage.status_rage == 0):
             self.rage.cast()
-        if(key == 'h' ):
+        if(key == 'h' and self.heal.status_heal == 0):
             self.heal.cast()
         return key
 
@@ -66,7 +77,12 @@ class Village():
         os.system('clear')
 
         # render village
-        self.village = [[self.base_color for i in range(self.cols+self.troops_spells_cols)] for j in range(self.rows)]
+        if self.heal.status_heal == 2:
+            self.village = [[self.heal.heal_color for i in range(self.cols+self.troops_spells_cols)] for j in range(self.rows)]
+        elif self.rage.status_rage == 2:
+            self.village = [[self.rage.rage_color for i in range(self.cols+self.troops_spells_cols)] for j in range(self.rows)]
+        else:
+            self.village = [[self.base_color for i in range(self.cols+self.troops_spells_cols)] for j in range(self.rows)]
         
         # render village border
         self.village = np.insert(self.village, 0, self.border_color, axis=0)
@@ -173,9 +189,11 @@ class Village():
         if self.rage.status_rage == 0:
             self.village[self.rage.rage_y][self.rage.rage_x] = self.rage.rage_color
         elif self.rage.status_rage == 1:
+            self.rage.rage_timer = time.time()
             self.rage.status_rage = 2
         elif self.rage.status_rage == 2:
-            pass
+            if self.rage_time >= 5:
+                self.rage.status_rage = 3
 
 
         # render Heal
@@ -189,9 +207,19 @@ class Village():
         if self.heal.status_heal == 0:
             self.village[self.heal.heal_y][self.heal.heal_x] = self.heal.heal_color
         elif self.heal.status_heal == 1:
+            self.heal.heal_timer = time.time()
             self.heal.status_heal = 2
         elif self.heal.status_heal == 2:
-            pass
+            if self.heal_time >= 5:
+                self.heal.status_heal = 3
+
+        if self.game_over == False:
+            self.current_time = time.time()
+            self.time_elapsed = math.floor(self.current_time - self.start_time)
+            if self.heal.status_heal == 2:
+                self.heal_time = math.floor(self.current_time - self.heal.heal_timer)
+            if self.rage.status_rage == 2:
+                self.rage_time = math.floor(self.current_time - self.rage.rage_timer)
 
 
         print('\n'.join([''.join(row) for row in self.village]))
