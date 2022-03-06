@@ -5,7 +5,7 @@ import numpy as np
 class Troops():
 
     def __init__(self,start,end):
-        self.troops_color = Back.MAGENTA+' '+Style.RESET_ALL
+        self.troops_color = Back.BLUE+' '+Style.RESET_ALL
         self.x = np.zeros((10), type(int))
         self.y = np.zeros((10), type(int))
         self.status = np.zeros((10), type(int))

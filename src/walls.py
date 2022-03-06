@@ -7,7 +7,7 @@ class Walls():
     def __init__(self):
         self.height = 1
         self.width = 1
-        self.health = np.full((100), 40)
+        self.health = np.full((114), 40)
         self.wall_color = Back.BLACK + ' ' + Style.RESET_ALL
         self.y = np.full((114), 0)
         self.x = np.full((114), 0)
@@ -29,13 +29,15 @@ class Walls():
 
         for i in range(14):
             self.y[i+100] = 15+i
-            self.x[i+100  ] = 61
+            self.x[i+100] = 61
 
-
-
-        
-    def health_check(self):
+    def check_coordinates(self, y, x):
         '''
-        This function checks the health of the hut and returns the color of the building
+        This function checks the coordinates of the walls and returns if a wall is present or not
         '''
+        for i in range(114):
+            if self.y[i] == y and self.x[i] == x and self.health[i] > 0:
+                return True
+
+        return False
         

@@ -1,3 +1,4 @@
+from ast import Str
 from colorama import Fore, Style, Back
 from src.input import Get, input_to
 from src.king import King
@@ -18,9 +19,8 @@ class Village():
         self.troops_spells_cols = 26
 
 
-        self.village_color = Back.LIGHTWHITE_EX+' '+Style.RESET_ALL
+        self.base_color = Back.LIGHTWHITE_EX+' '+Style.RESET_ALL
         self.border_color = Back.BLACK+' '+Style.RESET_ALL
-        self.village = np.zeros((self.rows, self.cols))
         self.getch = Get()
 
         self.king = King(self.cols+self.troops_spells_cols - 11,7)
@@ -32,6 +32,7 @@ class Village():
         self.huts = Hut()
         self.cannons = Cannon()
         self.walls = Walls()
+        
 
         self.render()
 
@@ -41,10 +42,16 @@ class Village():
         
         if(key == 'b' and self.king.status == 0):
             self.king.spawn()
-        if(key == 'w' or 'a' or 's' or 'd' or 'space' and self.king.status == 1):
-            self.king.move(key)
-        if(key == 'i' or 'j' or 'k' and self.troops.count < 10):
-            self.troops.spawn(key)
+        if(key == 'w' or 'a' or 's' or 'd' or 'space'):
+            if self.king.status == 1:
+                self.king.move(key, self.walls, self.huts, self.cannons, self.th)
+            else:
+                pass
+        if(key == 'i' or 'j' or 'k'):
+            if self.troops.count < 10:
+                self.troops.spawn(key)
+            else:
+                pass
         if(key == 'r' ):
             self.rage.cast()
         if(key == 'h' ):
@@ -56,7 +63,7 @@ class Village():
         os.system('clear')
 
         # render village
-        self.village = [[self.village_color for i in range(self.cols+self.troops_spells_cols)] for j in range(self.rows)]
+        self.village = [[self.base_color for i in range(self.cols+self.troops_spells_cols)] for j in range(self.rows)]
         
         # render village border
         self.village = np.insert(self.village, 0, self.border_color, axis=0)
@@ -109,10 +116,15 @@ class Village():
         for i in range(troop_king_len):
             self.village[troop_king_y][troop_king_x+i] = Fore.YELLOW+troop_king[i]+Style.RESET_ALL
 
+        king_xx = str(self.king.x)
+        king_yy = str(self.king.y)
+
         if self.king.status == 0:
             self.village[self.king.y][self.king.x] = self.king.king_color
         elif self.king.status == 1:
             self.village[self.king.y][self.king.x] = self.king.king_color
+            self.village[7][self.cols+self.troops_spells_cols - 11] = Fore.YELLOW+king_xx+Style.RESET_ALL
+            self.village[7][self.cols+self.troops_spells_cols - 10] = Fore.YELLOW+king_yy+Style.RESET_ALL
 
         # render Barbarians
         troop_barb = "--Barb--"

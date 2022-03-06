@@ -4,9 +4,10 @@ import numpy as np
 class Building():
 
     def __init__(self):
-        self.building_color_100 = Back.GREEN+' '+Style.RESET_ALL                # color of the building when the health is in the range of 50 - 100%
-        self.building_color_50  = Back.YELLOW+' '+Style.RESET_ALL               # color of the building when the health is in the range of 20 - 50%
-        self.building_color_20  = Back.RED+' '+Style.RESET_ALL                  # color of the building when the health is in the range of 0 - 20%
+        self.building_color_100 = Back.LIGHTGREEN_EX+' '+Style.RESET_ALL                # color of the building when the health is in the range of 50 - 100%
+        self.building_color_50  = Back.LIGHTYELLOW_EX+' '+Style.RESET_ALL               # color of the building when the health is in the range of 20 - 50%
+        self.building_color_20  = Back.LIGHTRED_EX+' '+Style.RESET_ALL    
+        self.building_color_dead = Back.LIGHTBLACK_EX+' '+Style.RESET_ALL              # color of the building when the health is in the range of 0 - 20%
 
 
 class Hut(Building):
@@ -44,12 +45,24 @@ class Hut(Building):
         '''
         This function checks the health of the hut and returns the color of the building
         '''
-        if self.health[i] <= ((20/100)*20):
+        if self.health[0] == 0:
+            return self.building_color_dead
+        elif self.health[i] <= ((20/100)*20):
             return self.building_color_20
         elif self.health[i] <= ((50/100)*20):
             return self.building_color_50
         else:
             return self.building_color_100
+
+    def check_coordinates(self, y, x):
+        '''
+        This function checks the coordinates of the huts and returns if a hut is present or not
+        '''
+        for i in range(5):
+            if self.y[i] == y and self.x[i] == x and self.health[i] > 0:
+                return True
+
+        return False
 
 class Cannon(Building):
     
@@ -76,13 +89,25 @@ class Cannon(Building):
         '''
         This function checks the health of the hut and returns the color of the building
         '''
-        if self.health[i] <= ((20/100)*50):
+        if self.health[0] == 0:
+            return self.building_color_dead
+        elif self.health[i] <= ((20/100)*50):
             return self.building_color_20
         elif self.health[i] <= ((50/100)*50):
             return self.building_color_50
         else:
             return self.building_color_100
 
+    def check_coordinates(self, y, x):
+        '''
+        This function checks the coordinates of the cannons and returns if a cannon is present or not
+        '''
+        for i in range(2):
+            for j in range (self.height):
+                for k in range (self.width):
+                    if self.y[i]+j == y and self.x[i]+k == x and self.health[i] > 0:
+                        return True
+        return False
 class TownHall(Building):
 
     def __init__(self):
@@ -96,11 +121,24 @@ class TownHall(Building):
         
     def health_check(self):
         '''
-        This function checks the health of the hut and returns the color of the building
+        This function checks the health of the Townhall and returns the color of the building
         '''
-        if self.health[0] <= ((20/100)*100):
+        if self.health[0] == 0:
+            return self.building_color_dead
+        elif self.health[0] <= ((20/100)*100):
             return self.building_color_20
         elif self.health[0] <= ((50/100)*100):
             return self.building_color_50
         else:
             return self.building_color_100
+
+    def check_coordinates(self, y, x):
+        '''
+        This function checks the coordinates of the TownHall and returns if TownHall is present or not
+        '''
+        for i in range (self.height):
+            for j in range (self.width):
+                if self.y+i == y and self.x+j == x and self.health > 0:
+                    return True
+
+        return False

@@ -1,5 +1,8 @@
 from colorama import Fore, Style, Back
 import numpy as np
+from src.building import TownHall, Hut, Cannon
+from src.walls import Walls
+from src.utlis import Utils
 
 class King():
     
@@ -19,20 +22,42 @@ class King():
 
 
 
-    def move(self, key):
+    def move(self, key, walls, huts, cannons, th):
         """Moving king."""
+        prev_y = self.y
+        prev_x = self.x
         if key == 'w':
-            self.y -= 1*self.king_movement_speed
+            self.y -= self.king_movement_speed
         elif key == 'a':
-            self.x -= 1*self.king_movement_speed
+            self.x -= self.king_movement_speed
         elif key == 's':
-            self.y += 1*self.king_movement_speed
+            self.y += self.king_movement_speed
         elif key == 'd':
-            self.x += 1*self.king_movement_speed
+            self.x += self.king_movement_speed
         elif key == 'space':
             self.attack()
         else:
             pass
+
+        # retrace the path if there is a obstacle
+        if walls.check_coordinates(self.y, self.x):
+            self.y = prev_y
+            self.x = prev_x
+        elif huts.check_coordinates(self.y, self.x):
+            self.y = prev_y
+            self.x = prev_x
+        elif cannons.check_coordinates(self.y, self.x):
+            self.y = prev_y
+            self.x = prev_x
+        elif th.check_coordinates(self.y, self.x):
+            self.y = prev_y
+            self.x = prev_x
+        elif Utils.check_border_coordinates(self.y, self.x):
+            self.y = prev_y
+            self.x = prev_x
+        
+
+        
 
     def spawn(self):
         """Spawning king."""
@@ -49,4 +74,3 @@ class King():
         self.king_health -= damage
         if self.king_health <= 0:
             self.status = 2
-        

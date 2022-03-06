@@ -3,7 +3,7 @@ from colorama import Fore, Style, Back
 class Spell():
 
     def __init__(self):
-        self.rage_color = Back.BLUE+' '+Style.RESET_ALL
+        self.rage_color = Back.MAGENTA+' '+Style.RESET_ALL
         self.status_rage = 0
         
         self.heal_color = Back.YELLOW+' '+Style.RESET_ALL
