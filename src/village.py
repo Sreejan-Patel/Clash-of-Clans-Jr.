@@ -98,9 +98,9 @@ class Village():
 
         # render Troops
         length = 1
-        troop_spell_color = Back.BLACK+' '+Style.RESET_ALL
+        troop_spell_color = Back.LIGHTBLACK_EX+' '+Style.RESET_ALL
 
-        for i in range(self.rows+1):
+        for i in range(self.rows+2):
             for j in range(self.cols+2*length, self.cols+self.troops_spells_cols+2*length):
                 self.village[i][j] = troop_spell_color
 
@@ -119,15 +119,24 @@ class Village():
         for i in range(troop_king_len):
             self.village[troop_king_y][troop_king_x+i] = Fore.YELLOW+troop_king[i]+Style.RESET_ALL
 
-        king_xx = str(self.king.x)
-        king_yy = str(self.king.y)
+        king_health = "Health: "
+        king_health_len = len(king_health)
+        king_health_x = (self.cols+6)
+        king_health_y = 7
+
+        health_bar_len = 10
+        king_health_length = int(self.king.king_health * health_bar_len / 100)
 
         if self.king.status == 0:
             self.village[self.king.y][self.king.x] = self.king.king_color
         elif self.king.status == 1:
             self.village[self.king.y][self.king.x] = self.king.king_color
-            self.village[7][self.cols+self.troops_spells_cols - 11] = Fore.YELLOW+king_xx+Style.RESET_ALL
-            self.village[7][self.cols+self.troops_spells_cols - 10] = Fore.YELLOW+king_yy+Style.RESET_ALL
+            for i in range(king_health_len):
+                self.village[king_health_y][king_health_x+i] = king_health[i]
+            for i in range(health_bar_len):
+                self.village[king_health_y][king_health_x+i+king_health_len] = Back.BLACK+' '+Style.RESET_ALL
+            for i in range(king_health_length):
+                self.village[king_health_y][king_health_x+i+king_health_len] = Back.RED+' '+Style.RESET_ALL
 
         self.king.king_color = Back.RED+' '+Style.RESET_ALL
 
