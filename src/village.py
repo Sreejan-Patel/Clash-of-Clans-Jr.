@@ -42,11 +42,14 @@ class Village():
         
         if(key == 'b' and self.king.status == 0):
             self.king.spawn()
-        if(key == 'w' or 'a' or 's' or 'd' or 'space'):
+        if(key == 'w' or 'a' or 's' or 'd'):
             if self.king.status == 1:
                 self.king.move(key, self.walls, self.huts, self.cannons, self.th)
             else:
                 pass
+        if(key == ' '):
+            if self.king.status == 1:
+                self.king.attack(self.walls, self.huts, self.cannons, self.th)
         if(key == 'i' or 'j' or 'k'):
             if self.troops.count < 10:
                 self.troops.spawn(key)
@@ -90,7 +93,7 @@ class Village():
 
         # render walls
         for i in range(114):
-            self.village[self.walls.y[i]][self.walls.x[i]] = self.walls.wall_color
+            self.village[self.walls.y[i]][self.walls.x[i]] = self.walls.health_check(i)
 
 
         # render Troops
@@ -125,6 +128,8 @@ class Village():
             self.village[self.king.y][self.king.x] = self.king.king_color
             self.village[7][self.cols+self.troops_spells_cols - 11] = Fore.YELLOW+king_xx+Style.RESET_ALL
             self.village[7][self.cols+self.troops_spells_cols - 10] = Fore.YELLOW+king_yy+Style.RESET_ALL
+
+        self.king.king_color = Back.RED+' '+Style.RESET_ALL
 
         # render Barbarians
         troop_barb = "--Barb--"

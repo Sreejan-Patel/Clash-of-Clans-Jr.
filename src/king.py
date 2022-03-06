@@ -34,29 +34,25 @@ class King():
             self.y += self.king_movement_speed
         elif key == 'd':
             self.x += self.king_movement_speed
-        elif key == 'space':
-            self.attack()
         else:
             pass
 
         # retrace the path if there is a obstacle
-        if walls.check_coordinates(self.y, self.x):
+        if walls.check_coordinates(self.y, self.x) > -1:
             self.y = prev_y
             self.x = prev_x
-        elif huts.check_coordinates(self.y, self.x):
+        elif huts.check_coordinates(self.y, self.x) > -1:
             self.y = prev_y
             self.x = prev_x
-        elif cannons.check_coordinates(self.y, self.x):
+        elif cannons.check_coordinates(self.y, self.x) > -1:
             self.y = prev_y
             self.x = prev_x
-        elif th.check_coordinates(self.y, self.x):
+        elif th.check_coordinates(self.y, self.x) > -1:
             self.y = prev_y
             self.x = prev_x
         elif Utils.check_border_coordinates(self.y, self.x):
             self.y = prev_y
             self.x = prev_x
-        
-
         
 
     def spawn(self):
@@ -65,9 +61,61 @@ class King():
         self.x = 5
         self.y = 5
         
-    def attack(self):
+    def attack(self, walls, huts, cannons, th):
         """Attacking."""
-        pass
+        self.king_color = Back.BLACK+' '+Style.RESET_ALL
+
+        wall_l = walls.check_coordinates(self.y, self.x-1)
+        wall_r = walls.check_coordinates(self.y, self.x+1)
+        wall_u = walls.check_coordinates(self.y-1, self.x)
+        wall_d = walls.check_coordinates(self.y+1, self.x)
+        
+        hut_l = huts.check_coordinates(self.y, self.x-1)
+        hut_r = huts.check_coordinates(self.y, self.x+1)
+        hut_u = huts.check_coordinates(self.y-1, self.x)
+        hut_d = huts.check_coordinates(self.y+1, self.x)
+        
+        cannon_l = cannons.check_coordinates(self.y, self.x-1)
+        cannon_r = cannons.check_coordinates(self.y, self.x+1)
+        cannon_u = cannons.check_coordinates(self.y-1, self.x)
+        cannon_d = cannons.check_coordinates(self.y+1, self.x)
+        
+        th_l = th.check_coordinates(self.y, self.x-1)
+        th_r = th.check_coordinates(self.y, self.x+1)
+        th_u = th.check_coordinates(self.y-1, self.x)
+        th_d = th.check_coordinates(self.y+1, self.x)
+
+        if wall_l != -1:
+            walls.health_decrease(wall_l, self.king_attack_damage)
+        elif wall_r != -1:
+            walls.health_decrease(wall_r, self.king_attack_damage)
+        elif wall_u != -1:
+            walls.health_decrease(wall_u, self.king_attack_damage)
+        elif wall_d != -1:
+            walls.health_decrease(wall_d, self.king_attack_damage)
+
+        elif hut_l != -1:
+            huts.health_decrease(hut_l, self.king_attack_damage)
+        elif hut_r != -1:
+            huts.health_decrease(hut_r, self.king_attack_damage)
+        elif hut_u != -1:
+            huts.health_decrease(hut_u, self.king_attack_damage)
+        elif hut_d != -1:
+            huts.health_decrease(hut_d, self.king_attack_damage)
+
+        elif cannon_l != -1:
+            cannons.health_decrease(cannon_l, self.king_attack_damage)
+        elif cannon_r != -1:
+            cannons.health_decrease(cannon_r, self.king_attack_damage)
+        elif cannon_u != -1:
+            cannons.health_decrease(cannon_u, self.king_attack_damage)
+        elif cannon_d != -1:
+            cannons.health_decrease(cannon_d, self.king_attack_damage)
+
+        elif th_l != -1 or th_r != -1 or th_u != -1 or th_d != -1:
+            th.health_decrease(self.king_attack_damage)
+        
+
 
     def health_decrease(self, damage):
         """Decrease king's health"""

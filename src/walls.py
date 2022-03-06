@@ -9,6 +9,7 @@ class Walls():
         self.width = 1
         self.health = np.full((114), 40)
         self.wall_color = Back.BLACK + ' ' + Style.RESET_ALL
+        self.base_color = Back.LIGHTWHITE_EX + ' ' + Style.RESET_ALL
         self.y = np.full((114), 0)
         self.x = np.full((114), 0)
         self.initialize_walls()
@@ -37,7 +38,21 @@ class Walls():
         '''
         for i in range(114):
             if self.y[i] == y and self.x[i] == x and self.health[i] > 0:
-                return True
+                return i
 
-        return False
-        
+        return -1
+    
+    def health_check(self, i):
+        '''
+        This function checks the health of the wall and returns the color of the wall
+        '''
+        if self.health[i] == 0:
+            return self.base_color
+        else:
+            return self.wall_color
+
+    def health_decrease(self, i, damage):
+        '''
+        This function decreases the health of the wall by damage
+        '''
+        self.health[i] -= damage

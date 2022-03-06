@@ -45,11 +45,11 @@ class Hut(Building):
         '''
         This function checks the health of the hut and returns the color of the building
         '''
-        if self.health[0] == 0:
+        if self.health[i] <= 0:
             return self.building_color_dead
-        elif self.health[i] <= ((20/100)*20):
+        elif self.health[i] <= ((20/100)*30):
             return self.building_color_20
-        elif self.health[i] <= ((50/100)*20):
+        elif self.health[i] <= ((50/100)*30):
             return self.building_color_50
         else:
             return self.building_color_100
@@ -60,9 +60,15 @@ class Hut(Building):
         '''
         for i in range(5):
             if self.y[i] == y and self.x[i] == x and self.health[i] > 0:
-                return True
+                return i
 
-        return False
+        return -1
+    
+    def health_decrease(self, i, damage):
+        '''
+        This function decreases the health of the hut by damage
+        '''
+        self.health[i] -= damage
 
 class Cannon(Building):
     
@@ -89,11 +95,11 @@ class Cannon(Building):
         '''
         This function checks the health of the hut and returns the color of the building
         '''
-        if self.health[0] == 0:
+        if self.health[i] <= 0:
             return self.building_color_dead
-        elif self.health[i] <= ((20/100)*50):
+        elif self.health[i] <= ((20/100)*100):
             return self.building_color_20
-        elif self.health[i] <= ((50/100)*50):
+        elif self.health[i] <= ((50/100)*100):
             return self.building_color_50
         else:
             return self.building_color_100
@@ -106,8 +112,14 @@ class Cannon(Building):
             for j in range (self.height):
                 for k in range (self.width):
                     if self.y[i]+j == y and self.x[i]+k == x and self.health[i] > 0:
-                        return True
-        return False
+                        return i
+        return -1
+
+    def health_decrease(self, i, damage):
+        '''
+        This function decreases the health of the cannon by damage
+        '''
+        self.health[i] -= damage
 class TownHall(Building):
 
     def __init__(self):
@@ -123,11 +135,11 @@ class TownHall(Building):
         '''
         This function checks the health of the Townhall and returns the color of the building
         '''
-        if self.health[0] == 0:
+        if self.health[0] <= 0:
             return self.building_color_dead
-        elif self.health[0] <= ((20/100)*100):
+        elif self.health[0] <= ((20/100)*150):
             return self.building_color_20
-        elif self.health[0] <= ((50/100)*100):
+        elif self.health[0] <= ((50/100)*150):
             return self.building_color_50
         else:
             return self.building_color_100
@@ -139,6 +151,12 @@ class TownHall(Building):
         for i in range (self.height):
             for j in range (self.width):
                 if self.y+i == y and self.x+j == x and self.health > 0:
-                    return True
+                    return 1
 
-        return False
+        return -1
+
+    def health_decrease(self, damage):
+        '''
+        This function decreases the health of the TownHall by damage
+        '''
+        self.health -= damage
