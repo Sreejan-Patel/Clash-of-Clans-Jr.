@@ -1,5 +1,3 @@
-from ast import Str
-from pydoc import doc
 from colorama import Fore, Style, Back
 from src.input import Get, input_to
 from src.king import King
@@ -181,7 +179,7 @@ class Village():
         self.king.king_color = Back.RED+' '+Style.RESET_ALL
 
         # Barbarians Attack
-        self.troops.move(self.walls, self.huts, self.cannons, self.th, self.rage, self.heal)
+        self.troops.move(self.walls, self.huts, self.cannons, self.th, self.rage,self.game_over)
 
         # render Barbarians
         troop_barb = "--Barb--"
