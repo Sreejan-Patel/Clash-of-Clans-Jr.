@@ -1,4 +1,5 @@
 from ast import Str
+from pydoc import doc
 from colorama import Fore, Style, Back
 from src.input import Get, input_to
 from src.king import King
@@ -36,7 +37,6 @@ class Village():
         self.th = TownHall()
         self.huts = Hut()
         self.cannons = Cannon()
-        self.cannon_attack = [-1,-1]
         self.walls = Walls()
 
         self.start_time = time.time()
@@ -72,6 +72,8 @@ class Village():
         if(key == 'h' and self.heal.status_heal == 0):
             self.heal.cast()
         return key
+    
+
 
     def render(self):
         """Rendering Game Output."""
@@ -103,41 +105,7 @@ class Village():
                     self.village[row][col] = self.huts.health_check(i)
 
         # Cannon attack
-        for i in range(2):
-            king_dist = 100
-            if self.king.status == 1:
-                king_dist = self.cannons.euclidean_distance(self.king.y,self.king.x,i)
-                if king_dist <= self.cannons.range:
-                    if self.cannon_attack[i] == -1 or 69:
-                        self.king.king_health -= self.cannons.damage
-                        if self.king.king_health <= 0:
-                            self.king.status = 2
-                            self.cannon_attack[i] = -1
-                    else:
-                        self.cannon_attack[i] == -1
-                else:
-                    self.cannon_attack[i] = -1
-            
-            troop_dist = np.full((10),100)
-            for j in range(10):
-
-                if self.troops.status[j] == 1:
-                    troop_dist[j] = self.cannons.euclidean_distance(self.troops.y[j],self.troops.x[j],i)
-                    if troop_dist[j] <= self.cannons.range:
-                        if self.cannon_attack[i] == -1 or self.troops.troop[j]:
-                            self.troops.health[j] -= self.cannons.damage
-                            if self.troops.health[j] <= 0:
-                                self.cannon_attack[i] = -1
-                        else:
-                            self.cannon_attack[i] = -1
-                    else:
-                        self.cannon_attack[i] = -1
-
-            if self.cannon_attack[i] == -1:
-                if min(troop_dist) < king_dist:
-                    self.cannon_attack[i] = self.troops.troop[troop_dist.index(min(troop_dist))]
-                else:
-                    self.cannon_attack[i] = 69
+        self.cannons.cannon_attack_troops(self.king, self.troops)
                     
         # render Cannons
         for i in range(2):
@@ -183,6 +151,12 @@ class Village():
         health_bar_len = 10
         king_health_length = int(self.king.king_health * health_bar_len / 100)
 
+        king_dead = "!!Dead!!"
+        king_dead_len = len(king_dead)
+        king_dead_x = (self.cols+self.troops_spells_cols - troop_king_len -7*length)
+        king_dead_y = 7
+
+
         if self.king.status == 0:
             self.village[self.king.y][self.king.x] = self.king.king_color
         elif self.king.status == 1:
@@ -193,6 +167,10 @@ class Village():
                 self.village[king_health_y][king_health_x+i+king_health_len] = Back.BLACK+' '+Style.RESET_ALL
             for i in range(king_health_length):
                 self.village[king_health_y][king_health_x+i+king_health_len] = Back.RED+' '+Style.RESET_ALL
+        elif self.king.status == 2:
+            for i in range(king_dead_len):
+                self.village[king_dead_y][king_dead_x+i] = Fore.RED+king_dead[i]+Style.RESET_ALL
+        
 
         self.king.king_color = Back.RED+' '+Style.RESET_ALL
 
@@ -260,6 +238,7 @@ class Village():
                 self.heal_time = math.floor(self.current_time - self.heal.heal_timer)
             if self.rage.status_rage == 2:
                 self.rage_time = math.floor(self.current_time - self.rage.rage_timer)
+            
 
 
         print('\n'.join([''.join(row) for row in self.village]))

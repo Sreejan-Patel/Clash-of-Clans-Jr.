@@ -1,6 +1,7 @@
 from colorama import Fore , Back , Style
 import numpy as np
 import math
+import time
 
 class Building():
 
@@ -84,6 +85,11 @@ class Cannon(Building):
         self.damage = 10
         self.range = 6
 
+        self.cannon_attack = [-1,-1]
+        self.cannon_time = [time.time(),time.time()]
+        self.cannon_attacking = [0,0]
+        self.cannon_ticks = [0,0]
+
     def initialize_cannons(self):
         '''
         This function initializes the huts
@@ -129,6 +135,71 @@ class Cannon(Building):
         This function calculates the euclidean distance between two points
         '''
         return math.sqrt((y1-self.y[i])**2 + (x1-self.x[i])**2)
+
+    def cannon_attack_troops(self, king, troops):
+        '''
+        This function attacks the troops or the king
+        '''
+        for i in range(2):
+            if self.health[i] <= 0:
+                continue
+            if self.cannon_attacking[i] == 1:
+                self.cannon_time[i] = time.time()
+                self.cannon_attacking[i] = 2
+            king_dist = 100
+            if king.status == 1:
+                king_dist = self.euclidean_distance(king.y,king.x,i)
+                if king_dist <= self.range:
+                    if self.cannon_attack[i] == 69:
+                        if math.floor(time.time() - self.cannon_time[i]) == self.cannon_ticks[i]:
+                            self.cannon_ticks[i] += 1
+                            king.king_health -= self.damage
+                            if king.king_health <= 0:
+                                king.status = 2
+                                self.cannon_attack[i] = -1
+                                self.cannon_attacking[i] = 0
+                                self.cannon_ticks[i] = 0
+                    else:
+                        self.cannon_attack[i] == -1
+                        self.cannon_attacking[i] = 0
+                        self.cannon_ticks[i] = 0
+                else:
+                    self.cannon_attack[i] = -1
+                    self.cannon_attacking[i] = 0
+                    self.cannon_ticks[i] = 0
+            
+            troop_dist = np.full((10),100)
+            for j in range(10):
+
+                if troops.status[j] == 1:
+                    troop_dist[j] = self.euclidean_distance(troops.y[j],troops.x[j],i)
+                    if troop_dist[j] <= self.range:
+                        if self.cannon_attack[i] == troops.troop[j]:
+                            if math.floor(time.time() - self.cannon_time[i]) == self.cannon_ticks[i]:
+                                self.cannon_ticks[i] +=1
+                                troops.health[j] -= self.damage
+                                if troops.health[j] <= 0:
+                                    troops.status[j] = 2
+                                    self.cannon_attack[i] = -1
+                                    self.cannon_attacking[i] = 0
+                                    self.cannon_ticks[i] = 0
+
+                        else:
+                            self.cannon_attack[i] = -1
+                            self.cannon_attacking[i] = 0
+                            self.cannon_ticks[i] = 0
+                    else:
+                        self.cannon_attack[i] = -1
+                        self.cannon_attacking[i] = 0
+                        self.cannon_ticks[i] = 0
+
+            if self.cannon_attack[i] == -1:
+                if min(troop_dist) < king_dist:
+                    self.cannon_attacking[i] = 1
+                    self.cannon_attack[i] = troops.troop[troop_dist.index(min(troop_dist))]
+                else:
+                    self.cannon_attacking[i] = 1
+                    self.cannon_attack[i] = 69
 
 class TownHall(Building):
 
