@@ -21,6 +21,7 @@ class Hut(Building):
         self.health = np.full((5), 30)
         self.y = np.full((5), 0)
         self.x = np.full((5), 0)
+        self.status = np.full((5), 1)
         self.initialize_huts()
 
     def initialize_huts(self):
@@ -71,6 +72,8 @@ class Hut(Building):
         This function decreases the health of the hut by damage
         '''
         self.health[i] -= damage
+        if self.health[i] <= 0:
+            self.status[i] = 0
 
 class Cannon(Building):
     
@@ -84,11 +87,15 @@ class Cannon(Building):
         self.initialize_cannons()
         self.damage = 10
         self.range = 6
+        self.status = np.full((2), 1)
 
         self.cannon_attack = [-1,-1]
         self.cannon_time = [time.time(),time.time()]
         self.cannon_attacking = [0,0]
         self.cannon_ticks = [0,0]
+
+        self.attack_status = np.full((2), 0)
+        self.attack_color = Back.BLACK+' '+Style.RESET_ALL
 
     def initialize_cannons(self):
         '''
@@ -129,20 +136,24 @@ class Cannon(Building):
         This function decreases the health of the cannon by damage
         '''
         self.health[i] -= damage
+        if self.health[i] <= 0:
+            self.status[i] = 0
 
     def euclidean_distance(self, y1, x1,i):
         '''
-        This function calculates the euclidean distance between two points
+        This function calculates the euclidean distance between two points (considering the middle y and x coordinates of the cannon)
         '''
-        return math.sqrt((y1-self.y[i])**2 + (x1-self.x[i])**2)
+        return math.sqrt((y1-(self.y[i]+1))**2 + (x1-(self.x[i]+1))**2)
 
     def cannon_attack_troops(self, king, troops):
         '''
         This function attacks the troops or the king
         '''
+
         for i in range(2):
             if self.health[i] <= 0:
                 continue
+            self.attack_status[i] = 0
             if self.cannon_attacking[i] == 1:
                 self.cannon_time[i] = time.time()
                 self.cannon_attacking[i] = 2
@@ -152,6 +163,7 @@ class Cannon(Building):
                 if king_dist <= self.range:
                     if self.cannon_attack[i] == 69:
                         if math.floor(time.time() - self.cannon_time[i]) == self.cannon_ticks[i]:
+                            self.attack_status[i] = 1
                             self.cannon_ticks[i] += 1
                             king.king_health -= self.damage
                             if king.king_health <= 0:
@@ -176,6 +188,7 @@ class Cannon(Building):
                     if troop_dist[j] <= self.range:
                         if self.cannon_attack[i] == troops.troop[j]:
                             if math.floor(time.time() - self.cannon_time[i]) == self.cannon_ticks[i]:
+                                self.attack_status[i] = 1
                                 self.cannon_ticks[i] +=1
                                 troops.health[j] -= self.damage
                                 if troops.health[j] <= 0:
@@ -196,7 +209,7 @@ class Cannon(Building):
             if self.cannon_attack[i] == -1:
                 if min(troop_dist) < king_dist:
                     self.cannon_attacking[i] = 1
-                    self.cannon_attack[i] = troops.troop[troop_dist.index(min(troop_dist))]
+                    self.cannon_attack[i] = troops.troop[np.argmin(troop_dist)]
                 else:
                     self.cannon_attacking[i] = 1
                     self.cannon_attack[i] = 69
@@ -210,6 +223,7 @@ class TownHall(Building):
         self.health = np.full((1), 150)
         self.x = 39
         self.y = 19
+        self.status = 1
 
         
     def health_check(self):
@@ -241,3 +255,5 @@ class TownHall(Building):
         This function decreases the health of the TownHall by damage
         '''
         self.health -= damage
+        if self.health <= 0:
+            self.status = 0

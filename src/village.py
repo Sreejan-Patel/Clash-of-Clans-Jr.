@@ -111,7 +111,13 @@ class Village():
         for i in range(2):
             for row in range(self.cannons.y[i],self.cannons.y[i]+self.cannons.height):
                 for col in range(self.cannons.x[i],self.cannons.x[i]+self.cannons.width):
-                    self.village[row][col] = self.cannons.health_check(i)
+                    if self.cannons.attack_status[i] == 1:
+                        if self.cannons.health[i] > 0:
+                            self.village[row][col] = self.cannons.attack_color
+                        else:
+                            self.village[row][col] = self.cannons.building_color_dead
+                    else:
+                        self.village[row][col] = self.cannons.health_check(i)
         
         
 
@@ -174,6 +180,9 @@ class Village():
 
         self.king.king_color = Back.RED+' '+Style.RESET_ALL
 
+        # Barbarians Attack
+        self.troops.move(self.walls, self.huts, self.cannons, self.th, self.rage, self.heal)
+
         # render Barbarians
         troop_barb = "--Barb--"
         troop_barb_len = len(troop_barb)
@@ -187,7 +196,7 @@ class Village():
                 self.village[self.troops.y[counter]][self.troops.x[counter]] = self.troops.troops_color
             if self.troops.status[counter] == 1:
                 self.village[self.troops.y[counter]][self.troops.x[counter]] = self.troops.troops_color
-        
+
         # render Spells
         spells = "----Spells----"
         spells_len = len(spells)
