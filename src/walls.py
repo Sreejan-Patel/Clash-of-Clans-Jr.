@@ -46,7 +46,7 @@ class Walls():
         '''
         This function checks the health of the wall and returns the color of the wall
         '''
-        if self.health[i] == 0:
+        if self.health[i] <= 0:
             return self.base_color
         else:
             return self.wall_color

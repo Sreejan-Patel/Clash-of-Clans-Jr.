@@ -24,37 +24,185 @@ class King():
 
 
 
-    def move(self, key, walls, huts, cannons, th):
+    def move(self, key, walls, huts, cannons, th, rage):
         """Moving king."""
         prev_y = self.y
         prev_x = self.x
-        if key == 'w':
-            self.y -= self.king_movement_speed
-        elif key == 'a':
-            self.x -= self.king_movement_speed
-        elif key == 's':
-            self.y += self.king_movement_speed
-        elif key == 'd':
-            self.x += self.king_movement_speed
-        else:
-            pass
+        if rage == 2:
+            obstacle = 0
+            if key == 'w':
+                self.y -= self.king_movement_speed // 2
+            elif key == 'a':
+                self.x -= self.king_movement_speed // 2
+            elif key == 's':
+                self.y += self.king_movement_speed // 2
+            elif key == 'd':
+                self.x += self.king_movement_speed // 2
+            else:
+                pass
 
-        # retrace the path if there is a obstacle
-        if walls.check_coordinates(self.y, self.x) > -1:
-            self.y = prev_y
-            self.x = prev_x
-        elif huts.check_coordinates(self.y, self.x) > -1:
-            self.y = prev_y
-            self.x = prev_x
-        elif cannons.check_coordinates(self.y, self.x) > -1:
-            self.y = prev_y
-            self.x = prev_x
-        elif th.check_coordinates(self.y, self.x) > -1:
-            self.y = prev_y
-            self.x = prev_x
-        elif Utils.check_border_coordinates(self.y, self.x):
-            self.y = prev_y
-            self.x = prev_x
+            if walls.check_coordinates(self.y, self.x) > -1:
+                self.y = prev_y
+                self.x = prev_x
+                obstacle = 1
+            elif huts.check_coordinates(self.y, self.x) > -1:
+                self.y = prev_y
+                self.x = prev_x
+                obstacle = 1
+            elif cannons.check_coordinates(self.y, self.x) > -1:
+                self.y = prev_y
+                self.x = prev_x
+                obstacle = 1
+            elif th.check_coordinates(self.y, self.x) > -1:
+                self.y = prev_y
+                self.x = prev_x
+                obstacle = 1
+            else:
+                obstacle = 2
+                self.y = prev_y
+                self.x = prev_x
+
+            if obstacle == 2:
+                if key == 'w':
+                    self.y -= self.king_movement_speed
+                elif key == 'a':
+                    self.x -= self.king_movement_speed
+                elif key == 's':
+                    self.y += self.king_movement_speed
+                elif key == 'd':
+                    self.x += self.king_movement_speed
+                else:
+                    pass
+
+                # retrace the path if there is a obstacle
+                if walls.check_coordinates(self.y, self.x) > -1:
+                    self.y = prev_y
+                    self.x = prev_x
+                    if rage == 2:
+                        if key == 'w':
+                            self.y -= self.king_movement_speed // 2
+                        elif key == 'a':
+                            self.x -= self.king_movement_speed // 2
+                        elif key == 's':
+                            self.y += self.king_movement_speed // 2
+                        elif key == 'd':
+                            self.x += self.king_movement_speed // 2
+                        else:
+                            pass
+
+                        # retrace the path if there is a obstacle
+                        if walls.check_coordinates(self.y, self.x) > -1:
+                            self.y = prev_y
+                            self.x = prev_x
+
+                elif huts.check_coordinates(self.y, self.x) > -1:
+                    self.y = prev_y
+                    self.x = prev_x
+                    if rage == 2:
+                        if key == 'w':
+                            self.y -= self.king_movement_speed // 2
+                        elif key == 'a':
+                            self.x -= self.king_movement_speed // 2
+                        elif key == 's':
+                            self.y += self.king_movement_speed // 2
+                        elif key == 'd':
+                            self.x += self.king_movement_speed // 2
+                        else:
+                            pass
+
+                        # retrace the path if there is a obstacle
+                        if huts.check_coordinates(self.y, self.x) > -1:
+                            self.y = prev_y
+                            self.x = prev_x
+                elif cannons.check_coordinates(self.y, self.x) > -1:
+                    self.y = prev_y
+                    self.x = prev_x
+                    if rage == 2:
+                        if key == 'w':
+                            self.y -= self.king_movement_speed // 2
+                        elif key == 'a':
+                            self.x -= self.king_movement_speed // 2
+                        elif key == 's':
+                            self.y += self.king_movement_speed // 2
+                        elif key == 'd':
+                            self.x += self.king_movement_speed // 2
+                        else:
+                            pass
+
+                        # retrace the path if there is a obstacle
+                        if cannons.check_coordinates(self.y, self.x) > -1:
+                            self.y = prev_y
+                            self.x = prev_x
+                elif th.check_coordinates(self.y, self.x) > -1:
+                    self.y = prev_y
+                    self.x = prev_x
+                    if rage == 2:
+                        if key == 'w':
+                            self.y -= self.king_movement_speed // 2
+                        elif key == 'a':
+                            self.x -= self.king_movement_speed // 2
+                        elif key == 's':
+                            self.y += self.king_movement_speed // 2
+                        elif key == 'd':
+                            self.x += self.king_movement_speed // 2
+                        else:
+                            pass
+
+                        # retrace the path if there is a obstacle
+                        if th.check_coordinates(self.y, self.x) > -1:
+                            self.y = prev_y
+                            self.x = prev_x
+                elif Utils.check_border_coordinates(self.y, self.x):
+                    self.y = prev_y
+                    self.x = prev_x
+                    if rage == 2:
+                        if key == 'w':
+                            self.y -= self.king_movement_speed // 2
+                        elif key == 'a':
+                            self.x -= self.king_movement_speed // 2
+                        elif key == 's':
+                            self.y += self.king_movement_speed // 2
+                        elif key == 'd':
+                            self.x += self.king_movement_speed // 2
+                        else:
+                            pass
+
+                        # retrace the path if there is a obstacle
+                        if Utils.check_border_coordinates(self.y, self.x):
+                            self.y = prev_y
+                            self.x = prev_x
+                else:
+                    pass
+            else:
+                return
+        else:
+            if key == 'w':
+                self.y -= self.king_movement_speed
+            elif key == 'a':
+                self.x -= self.king_movement_speed
+            elif key == 's':
+                self.y += self.king_movement_speed
+            elif key == 'd':
+                self.x += self.king_movement_speed
+            else:
+                pass
+
+            if walls.check_coordinates(self.y, self.x) > -1:
+                self.y = prev_y
+                self.x = prev_x
+            elif huts.check_coordinates(self.y, self.x) > -1:
+                self.y = prev_y
+                self.x = prev_x
+            elif cannons.check_coordinates(self.y, self.x) > -1:
+                self.y = prev_y
+                self.x = prev_x
+            elif th.check_coordinates(self.y, self.x) > -1:
+                self.y = prev_y
+                self.x = prev_x
+            else:
+                pass
+
+    
         
 
     def spawn(self):

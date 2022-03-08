@@ -56,7 +56,7 @@ class Village():
             self.king.spawn()
         if(key == 'w' or 'a' or 's' or 'd'):
             if self.king.status == 1:
-                self.king.move(key, self.walls, self.huts, self.cannons, self.th)
+                self.king.move(key, self.walls, self.huts, self.cannons, self.th, self.rage.status_rage)
             else:
                 pass
         if(key == ' '):
@@ -218,10 +218,25 @@ class Village():
             self.village[self.rage.rage_y][self.rage.rage_x] = self.rage_color
         elif self.rage.status_rage == 1:
             self.rage.rage_timer = time.time()
+            if self.king.status == 1:
+                self.king.king_attack_damage = self.king.king_attack_damage * 2
+                self.king.king_movement_speed = self.king.king_movement_speed * 2
+            for counter in range(10):
+                if self.troops.status[counter] == 1 :
+                    self.troops.damage = self.troops.damage * 2
+                    self.troops.movement_speed = self.troops.movement_speed * 2
             self.rage.status_rage = 2
         elif self.rage.status_rage == 2:
             if self.rage_time >= 5:
                 self.rage.status_rage = 3
+                if self.king.status == 1 or self.king.king_movement_speed == 2:
+                    self.king.king_attack_damage = self.king.king_attack_damage // 2
+                    self.king.king_movement_speed = self.king.king_movement_speed // 2
+            for counter in range(10):
+                if self.troops.status[counter] == 1 or self.troops.movement_speed == 2:
+                    self.troops.damage = self.troops.damage // 2
+                    self.troops.movement_speed = self.troops.movement_speed // 2
+
 
 
         # render Heal
