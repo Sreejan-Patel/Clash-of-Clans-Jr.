@@ -129,3 +129,9 @@ class King():
         self.king_health -= damage
         if self.king_health <= 0:
             self.status = 2
+
+    def health_increase_heal(self):
+        """Increase king's health"""
+        self.king_health = 1.5 * self.king_health   # heal 150% times
+        if self.king_health > 100:
+            self.king_health = 100

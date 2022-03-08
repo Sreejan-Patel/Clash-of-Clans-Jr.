@@ -29,8 +29,10 @@ class Village():
 
         self.rage = Rage(self.cols+self.troops_spells_cols - 11,19)
         self.rage_time = 0
+        self.rage_color = Back.LIGHTMAGENTA_EX+' '+Style.RESET_ALL
         self.heal = Heal(self.cols+self.troops_spells_cols - 11,23)
         self.heal_time = 0
+        self.heal_color = Back.LIGHTYELLOW_EX+' '+Style.RESET_ALL
 
         self.th = TownHall()
         self.huts = Hut()
@@ -79,9 +81,9 @@ class Village():
 
         # render village
         if self.heal.status_heal == 2:
-            self.village = [[self.heal.heal_color for i in range(self.cols+self.troops_spells_cols)] for j in range(self.rows)]
+            self.village = [[self.heal_color for i in range(self.cols+self.troops_spells_cols)] for j in range(self.rows)]
         elif self.rage.status_rage == 2:
-            self.village = [[self.rage.rage_color for i in range(self.cols+self.troops_spells_cols)] for j in range(self.rows)]
+            self.village = [[self.rage_color for i in range(self.cols+self.troops_spells_cols)] for j in range(self.rows)]
         else:
             self.village = [[self.base_color for i in range(self.cols+self.troops_spells_cols)] for j in range(self.rows)]
         
@@ -213,7 +215,7 @@ class Village():
             self.village[rage_y][rage_x+i] = Fore.YELLOW+rage[i]+Style.RESET_ALL
 
         if self.rage.status_rage == 0:
-            self.village[self.rage.rage_y][self.rage.rage_x] = self.rage.rage_color
+            self.village[self.rage.rage_y][self.rage.rage_x] = self.rage_color
         elif self.rage.status_rage == 1:
             self.rage.rage_timer = time.time()
             self.rage.status_rage = 2
@@ -231,12 +233,17 @@ class Village():
             self.village[heal_y][heal_x+i] = Fore.YELLOW+heal[i]+Style.RESET_ALL
 
         if self.heal.status_heal == 0:
-            self.village[self.heal.heal_y][self.heal.heal_x] = self.heal.heal_color
+            self.village[self.heal.heal_y][self.heal.heal_x] = self.heal_color
         elif self.heal.status_heal == 1:
             self.heal.heal_timer = time.time()
+            if self.king.status == 1:
+                self.king.health_increase_heal()
+            for counter in range(10):
+                if self.troops.status[counter] == 1:
+                    self.troops.health_increase_heal(counter)
             self.heal.status_heal = 2
         elif self.heal.status_heal == 2:
-            if self.heal_time >= 5:
+            if self.heal_time >= 1:
                 self.heal.status_heal = 3
 
         if self.game_over == False:

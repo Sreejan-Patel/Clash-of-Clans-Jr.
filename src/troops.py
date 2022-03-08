@@ -33,6 +33,12 @@ class Troops():
                 self.x[i] = start + i*length + 3*length
                 self.y[i] = 11
 
+    def health_increase_heal(self,i):
+        """Increase troops's health"""
+        self.health[i] = 1.5 * self.health[i]   # heal 150% times
+        if self.health[i] > 30:
+            self.health[i] = 30
+
     def spawn(self, key):
         """Spawning troops."""
         if self.count < 10:
