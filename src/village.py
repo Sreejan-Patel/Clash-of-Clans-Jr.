@@ -181,7 +181,7 @@ class Village():
             if self.troops.status[counter] == 0:
                 self.village[self.troops.y[counter]][self.troops.x[counter]] = self.troops.troops_color
             if self.troops.status[counter] == 1:
-                self.village[self.troops.y[counter]][self.troops.x[counter]] = self.troops.troops_color
+                self.village[self.troops.y[counter]][self.troops.x[counter]] = self.troops.health_check(counter)
 
         # Cannon attack
         self.cannons.cannon_attack_troops(self.king, self.troops)

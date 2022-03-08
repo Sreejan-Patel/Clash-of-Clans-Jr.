@@ -8,6 +8,7 @@ class Troops():
 
     def __init__(self,start,end):
         self.troops_color = Back.BLUE+' '+Style.RESET_ALL
+        self.troops_color_low_health = Back.LIGHTBLUE_EX+' '+Style.RESET_ALL
         self.x = np.zeros((10), type(int))
         self.y = np.zeros((10), type(int))
         self.status = np.zeros((10), type(int))
@@ -38,6 +39,15 @@ class Troops():
         self.health[i] = 1.5 * self.health[i]   # heal 150% times
         if self.health[i] > 30:
             self.health[i] = 30
+
+    def health_check(self, i):
+        '''
+        This function checks the health of the hut and returns the color of the building
+        '''
+        if self.health[i] <= ((50/100)*30):
+            return self.troops_color_low_health
+        else:
+            return self.troops_color
 
     def spawn(self, key):
         """Spawning troops."""
