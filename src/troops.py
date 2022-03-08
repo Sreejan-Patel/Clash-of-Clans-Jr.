@@ -82,208 +82,216 @@ class Troops():
         elif huts.check_coordinates(self.y[i], self.x[i]) > -1:
             self.y[i] = prev_y
             self.x[i] = prev_x
-            return 1
+            return 2
         elif cannons.check_coordinates(self.y[i], self.x[i]) > -1:
             self.y[i] = prev_y
             self.x[i] = prev_x
-            return 1
+            return 3
         elif th.check_coordinates(self.y[i], self.x[i]) > -1:
             self.y[i] = prev_y
             self.x[i] = prev_x
-            return 1
+            return 4
         elif Utils.check_border_coordinates(self.y[i], self.x[i]):
             self.y[i] = prev_y
             self.x[i] = prev_x
-            return 1
+            return 5
         else:
             return 0
     
     
-    def move_troops(self,i,rage,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d):
+    def move_troops(self,i,rage,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d,temp):
             if w == min(w,s,a,d):
                 self.y[i] -= 1
                 check = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                if check == 1:
+                if temp == 1 and check == 1:
+                    self.attack_wall(i,walls)
+                elif check > 0:
                     if s == min(s,a,d):
                         self.y[i] += 1
                         check2 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                        if check2 == 1:
+                        if check2 > 0:
                             if a == min(a,d):
                                 self.x[i] -= 1
                                 check3 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check3 == 1:
+                                if check3 > 0:
                                     self.x[i] += 1
                             else:
                                 self.x[i] += 1
                                 check4 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check4 == 1:
+                                if check4 > 0:
                                     self.x[i] -= 1
                     elif a == min(s,a,d):
                         self.x[i] -= 1
                         check2 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                        if check2 == 1:
+                        if check2 > 0:
                             if d == min(s,d):
                                 self.x[i] += 1
                                 check3 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check3 == 1:
+                                if check3 > 0:
                                     self.y[i] += 1
                             else:
                                 self.y[i] += 1
                                 check4 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check4 == 1:
+                                if check4 > 0:
                                     self.x[i] += 1
                     elif d == min(s,a,d):
                         self.x[i] += 1
                         check2 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                        if check2 == 1:
+                        if check2 > 0:
                             if s == min(s,a):
                                 self.y[i] += 1
                                 check3 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check3 == 1:
+                                if check3 > 0:
                                     self.x[i] -= 1
                             else:
                                 self.x[i] -= 1
                                 check4 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check4 == 1:
+                                if check4 > 0:
                                     self.y[i] += 1
                     
             elif s == min(w,s,a,d):
                 self.y[i] += 1
                 check = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                if check == 1:
+                if temp == 1 and check == 1:
+                    self.attack_wall(i,walls)
+                elif check > 0:
                     if w == min(w,a,d):
                         self.y[i] -= 1
                         check2 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                        if check2 == 1:
+                        if check2 > 0:
                             if a == min(a,d):
                                 self.x[i] -= 1
                                 check3 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check3 == 1:
+                                if check3 > 0:
                                     self.x[i] += 1
                             else:
                                 self.x[i] += 1
                                 check4 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check4 == 1:
+                                if check4 > 0:
                                     self.x[i] -= 1
                     elif a == min(w,a,d):
                         self.x[i] -= 1
                         check2 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                        if check2 == 1:
+                        if check2 > 0:
                             if d == min(s,d):
                                 self.x[i] += 1
                                 check3 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check3 == 1:
+                                if check3 > 0:
                                     self.y[i] -= 1
                             else:
                                 self.y[i] -= 1
                                 check4 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check4 == 1:
+                                if check4 > 0:
                                     self.x[i] += 1
                     elif d == min(w,a,d):
                         self.x[i] += 1
                         check2 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                        if check2 == 1:
+                        if check2 > 0:
                             if s == min(s,a):
                                 self.y[i] -= 1
                                 check3 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check3 == 1:
+                                if check3 > 0:
                                     self.x[i] -= 1
                             else:
                                 self.x[i] -= 1
                                 check4 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check4 == 1:
+                                if check4 > 0:
                                     self.y[i] -= 1
             elif a == min(w,s,a,d):
                 self.x[i] -= 1
                 check = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                if check == 1:
+                if temp == 1 and check == 1:
+                    self.attack_wall(i,walls)
+                elif check > 0:
                     if s == min(s,w,d):
                         self.y[i] += 1
                         check2 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                        if check2 == 1:
+                        if check2 > 0:
                             if w == min(w,d):
                                 self.y[i] -= 1
                                 check3 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check3 == 1:
+                                if check3 > 0:
                                     self.x[i] += 1
                             else:
                                 self.x[i] += 1
                                 check4 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check4 == 1:
+                                if check4 > 0:
                                     self.y[i] -= 1
                     elif w == min(s,w,d):
                         self.y[i] -= 1
                         check2 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                        if check2 == 1:
+                        if check2 > 0:
                             if d == min(s,d):
                                 self.x[i] += 1
                                 check3 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check3 == 1:
+                                if check3 > 0:
                                     self.y[i] += 1
                             else:
                                 self.y[i] += 1
                                 check4 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check4 == 1:
+                                if check4 > 0:
                                     self.x[i] += 1
                     elif d == min(s,w,d):
                         self.x[i] += 1
                         check2 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                        if check2 == 1:
+                        if check2 > 0:
                             if s == min(s,a):
                                 self.y[i] += 1
                                 check3 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check3 == 1:
+                                if check3 > 0:
                                     self.y[i] -= 1
                             else:
                                 self.y[i] -= 1
                                 check4 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check4 == 1:
+                                if check4 > 0:
                                     self.y[i] += 1
             elif d == min(w,s,a,d):
                 self.x[i] += 1
                 check = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                if check == 1:
+                if temp == 1 and check == 1:
+                    self.attack_wall(i,walls)
+                elif check > 0:
                     if s == min(s,a,w):
                         self.y[i] += 1
                         check2 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                        if check2 == 1:
+                        if check2 > 0:
                             if a == min(a,w):
                                 self.x[i] -= 1
                                 check3 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check3 == 1:
+                                if check3 > 0:
                                     self.y[i] -= 1
                             else:
                                 self.y[i] -= 1
                                 check4 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check4 == 1:
+                                if check4 > 0:
                                     self.x[i] -= 1
                     elif a == min(s,a,w):
                         self.x[i] -= 1
                         check2 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                        if check2 == 1:
+                        if check2 > 0:
                             if w == min(s,w):
                                 self.y[i] -= 1
                                 check3 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check3 == 1:
+                                if check3 > 0:
                                     self.y[i] += 1
                             else:
                                 self.y[i] += 1
                                 check4 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check4 == 1:
+                                if check4 > 0:
                                     self.y[i] -= 1
                     elif w == min(s,a,w):
                         self.y[i] -= 1
                         check2 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                        if check2 == 1:
+                        if check2 > 0:
                             if s == min(s,a):
                                 self.y[i] += 1
                                 check3 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check3 == 1:
+                                if check3 > 0:
                                     self.x[i] -= 1
                             else:
                                 self.x[i] -= 1
                                 check4 = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
-                                if check4 == 1:
+                                if check4 > 0:
                                     self.y[i] += 1
             else:
                 pass
@@ -325,15 +333,16 @@ class Troops():
             if self.status[i] == 1:
                 # first check if the troop is in the same position as the nearest broken wall , if not move there
                 is_wall = np.zeros((114), type(int))
-                is_protected = False
+                is_protected = True
                 if self.entered[i] == 0:
                     for j in range(114):
                         if walls.health[j] <= 0:
                             is_wall[j] = 1
                             is_protected = False
                 elif self.entered[i] == 1:
+                    temp = 0
                     self.nearest_building(i,huts,cannons,th,game_over)
-                    self.move_towards_nearest_building(i,rage,walls,huts,cannons,th)
+                    self.move_towards_nearest_building(i,rage,walls,huts,cannons,th,temp)
                         
 
                 walls_dist = np.full((114), 100)
@@ -342,7 +351,9 @@ class Troops():
 
                 # if no wall is broken, move towards the nearest building
                 if is_protected == True:
-                    self.nearest_building(i,huts,cannons,th)
+                    temp = 1
+                    self.nearest_building(i,huts,cannons,th,game_over)
+                    self.move_towards_nearest_building(i,rage,walls,huts,cannons,th,temp)
                 elif is_protected == False and self.entered[i] == 0:
                     wall_dist_min = 100
                     for j in range(114):
@@ -367,9 +378,10 @@ class Troops():
 
             prev_x = self.x[i]
             prev_y = self.y[i]
-            self.move_troops(i,rage,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d)
+            temp = 0
+            self.move_troops(i,rage,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d,temp)
     
-    def move_towards_nearest_building(self,i,rage,walls,huts,cannons,th):
+    def move_towards_nearest_building(self,i,rage,walls,huts,cannons,th,temp):
         """Move Towards Nearest Building"""
         if ((self.y[i] == self.move_y[i]+1 and self.x[i] == self.move_x[i]) or (self.y[i] == self.move_y[i]-1 and self.x[i] == self.move_x[i])
         or (self.y[i] == self.move_y[i] and self.x[i] == self.move_x[i]+1) or (self.y[i] == self.move_y[i] and self.x[i] == self.move_x[i]-1))  and self.health[i] > 0:
@@ -383,11 +395,10 @@ class Troops():
 
             prev_x = self.x[i]
             prev_y = self.y[i]
-            self.move_troops(i,rage,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d)
+            self.move_troops(i,rage,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d,temp)
 
     def attack(self,i,rage,walls,huts,cannons,th):
         """Attacking."""
-        self.king_color = Back.BLACK+' '+Style.RESET_ALL
         
         hut_l = huts.check_coordinates(self.y[i], self.x[i]-1)
         hut_r = huts.check_coordinates(self.y[i], self.x[i]+1)
@@ -426,8 +437,22 @@ class Troops():
         elif th_l != -1 or th_r != -1 or th_u != -1 or th_d != -1:
             th.health_decrease(self.damage)       
 
+    def attack_wall(self,i,walls):
+        """Attacking."""
+
+        wall_l = walls.check_coordinates(self.y[i], self.x[i]-1)
+        wall_r = walls.check_coordinates(self.y[i], self.x[i]+1)
+        wall_u = walls.check_coordinates(self.y[i]-1, self.x[i])
+        wall_d = walls.check_coordinates(self.y[i]+1, self.x[i])
             
-                
+        if wall_l != -1:
+            walls.health_decrease(wall_l, self.damage)
+        elif wall_r != -1:
+            walls.health_decrease(wall_r, self.damage)
+        elif wall_u != -1:
+            walls.health_decrease(wall_u, self.damage)
+        elif wall_d != -1:
+            walls.health_decrease(wall_d, self.damage)
             
 
 
