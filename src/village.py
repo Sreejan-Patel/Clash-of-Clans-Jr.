@@ -187,6 +187,7 @@ class Village():
         troop_barb_x = (self.cols+self.troops_spells_cols - troop_king_len -7*length)
         troop_barb_y = 9
         for i in range(troop_barb_len):
+
             self.village[troop_barb_y][troop_barb_x+i] = Fore.YELLOW+troop_barb[i]+Style.RESET_ALL  
 
               
