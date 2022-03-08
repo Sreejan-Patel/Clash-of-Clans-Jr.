@@ -12,7 +12,6 @@ class Troops():
         self.y = np.zeros((10), type(int))
         self.status = np.zeros((10), type(int))
         self.health = np.full((10), 30)
-        self.troop = np.arange(10)
         self.count = 0
         self.damage = 10
         self.movement_speed = 1

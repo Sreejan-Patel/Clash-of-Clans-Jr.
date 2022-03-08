@@ -82,8 +82,8 @@ class Cannon(Building):
         self.height = 2
         self.width = 3
         self.health = np.full((2), 100)
-        self.y = np.full((2), 0)
-        self.x = np.full((2), 0)
+        self.y = np.zeros((2), type(int))
+        self.x = np.zeros((2), type(int))
         self.initialize_cannons()
         self.damage = 10
         self.range = 6
@@ -139,11 +139,11 @@ class Cannon(Building):
         if self.health[i] <= 0:
             self.status[i] = 0
 
-    def euclidean_distance(self, y1, x1,i):
+    def euclidean_distance(self, y1, x1, y2, x2):
         '''
         This function calculates the euclidean distance between two points (considering the middle y and x coordinates of the cannon)
         '''
-        return math.sqrt((y1-(self.y[i]+1))**2 + (x1-(self.x[i]+1))**2)
+        return math.sqrt((y1-(y2+1))**2 + (x1-(x2+1))**2)
 
     def cannon_attack_troops(self, king, troops):
         '''
@@ -157,62 +157,89 @@ class Cannon(Building):
             if self.cannon_attacking[i] == 1:
                 self.cannon_time[i] = time.time()
                 self.cannon_attacking[i] = 2
-            king_dist = 100
+            
+            king_dist = 0
             if king.status == 1:
-                king_dist = self.euclidean_distance(king.y,king.x,i)
-                if king_dist <= self.range:
-                    if self.cannon_attack[i] == 69:
-                        if math.floor(time.time() - self.cannon_time[i]) == self.cannon_ticks[i]:
-                            self.attack_status[i] = 1
-                            self.cannon_ticks[i] += 1
-                            king.king_health -= self.damage
-                            if king.king_health <= 0:
-                                king.status = 2
-                                self.cannon_attack[i] = -1
-                                self.cannon_attacking[i] = 0
-                                self.cannon_ticks[i] = 0
-                    else:
-                        self.cannon_attack[i] == -1
-                        self.cannon_attacking[i] = 0
-                        self.cannon_ticks[i] = 0
-                else:
-                    self.cannon_attack[i] = -1
-                    self.cannon_attacking[i] = 0
-                    self.cannon_ticks[i] = 0
+                king_dist = self.euclidean_distance(king.y, king.x, self.y[i], self.x[i])
+            else:
+                king_dist = 1000
             
             troop_dist = np.full((10),100)
             for j in range(10):
-
                 if troops.status[j] == 1:
-                    troop_dist[j] = self.euclidean_distance(troops.y[j],troops.x[j],i)
-                    if troop_dist[j] <= self.range:
-                        if self.cannon_attack[i] == troops.troop[j]:
+                    troop_dist[j] = troop_dist[j] = self.euclidean_distance(troops.y[j], troops.x[j], self.y[i], self.x[i])
+                else:
+                    troop_dist[j] = 1000
+            
+            if self.cannon_attack[i] == -1:
+                min_troop_dist = np.min(troop_dist)
+                if min_troop_dist < king_dist:
+                    if troops.status[np.argmin(troop_dist)] == 1:
+                        self.cannon_time[i] = 0
+                        self.cannon_attacking[i] = 1
+                        self.cannon_attack[i] = np.argmin(troop_dist)
+                        self.cannon_ticks[i] = 0
+                    else:
+                        self.cannon_time[i] = 0
+                        self.cannon_attacking[i] = 0
+                        self.cannon_attack[i] = -1
+                        self.cannon_ticks[i] = 0
+                else:
+                    if king.status == 1:
+                        self.cannon_time[i] = 0
+                        self.cannon_attacking[i] = 1
+                        self.cannon_attack[i] = 69
+                        self.cannon_ticks[i] = 0
+                    else:
+                        self.cannon_time[i] = 0
+                        self.cannon_attacking[i] = 0
+                        self.cannon_attack[i] = -1
+                        self.cannon_ticks[i] = 0
+            
+            elif self.cannon_attack[i] == 69:
+                if king.status == 1:
+                    king_dist = self.euclidean_distance(king.y,king.x,self.y[i],self.x[i])
+                    if king_dist <= self.range:
                             if math.floor(time.time() - self.cannon_time[i]) == self.cannon_ticks[i]:
                                 self.attack_status[i] = 1
-                                self.cannon_ticks[i] +=1
-                                troops.health[j] -= self.damage
-                                if troops.health[j] <= 0:
-                                    troops.status[j] = 2
+                                self.cannon_ticks[i] += 1
+                                king.king_health -= self.damage
+                                if king.king_health <= 0:
+                                    king.status = 2
                                     self.cannon_attack[i] = -1
                                     self.cannon_attacking[i] = 0
                                     self.cannon_ticks[i] = 0
-
-                        else:
-                            self.cannon_attack[i] = -1
-                            self.cannon_attacking[i] = 0
-                            self.cannon_ticks[i] = 0
+                                    self.cannon_time[i] = 0
                     else:
                         self.cannon_attack[i] = -1
                         self.cannon_attacking[i] = 0
                         self.cannon_ticks[i] = 0
+                        self.cannon_time[i] = 0
 
-            if self.cannon_attack[i] == -1:
-                if min(troop_dist) < king_dist:
-                    self.cannon_attacking[i] = 1
-                    self.cannon_attack[i] = troops.troop[np.argmin(troop_dist)]
-                else:
-                    self.cannon_attacking[i] = 1
-                    self.cannon_attack[i] = 69
+            else:
+                for j in range(10):
+
+                    if self.cannon_attack[i] == j:
+                        if troops.status[j] == 1:
+                            troop_dist[j] = self.euclidean_distance(troops.y[j],troops.x[j],self.y[i],self.x[i])
+                            if troop_dist[j] <= self.range:
+                                    if math.floor(time.time() - self.cannon_time[i]) == self.cannon_ticks[i]:
+                                        self.attack_status[i] = 1
+                                        self.cannon_ticks[i] +=1
+                                        troops.health[j] -= self.damage
+                                        if troops.health[j] <= 0:
+                                            troops.status[j] = 2
+                                            self.cannon_attack[i] = -1
+                                            self.cannon_attacking[i] = 0
+                                            self.cannon_ticks[i] = 0
+                                            self.cannon_time[i] = 0
+                            else:
+                                self.cannon_attack[i] = -1
+                                self.cannon_attacking[i] = 0
+                                self.cannon_ticks[i] = 0
+                                self.cannon_time[i] = 0
+                    else:
+                        continue
 
 class TownHall(Building):
 

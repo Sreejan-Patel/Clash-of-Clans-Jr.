@@ -70,8 +70,8 @@ class Village():
         if(key == 'h' and self.heal.status_heal == 0):
             self.heal.cast()
         return key
-    
 
+    
 
     def render(self):
         """Rendering Game Output."""
@@ -101,23 +101,6 @@ class Village():
             for row in range(self.huts.y[i],self.huts.y[i]+self.huts.height):
                 for col in range(self.huts.x[i],self.huts.x[i]+self.huts.width):
                     self.village[row][col] = self.huts.health_check(i)
-
-        # Cannon attack
-        self.cannons.cannon_attack_troops(self.king, self.troops)
-                    
-        # render Cannons
-        for i in range(2):
-            for row in range(self.cannons.y[i],self.cannons.y[i]+self.cannons.height):
-                for col in range(self.cannons.x[i],self.cannons.x[i]+self.cannons.width):
-                    if self.cannons.attack_status[i] == 1:
-                        if self.cannons.health[i] > 0:
-                            self.village[row][col] = self.cannons.attack_color
-                        else:
-                            self.village[row][col] = self.cannons.building_color_dead
-                    else:
-                        self.village[row][col] = self.cannons.health_check(i)
-        
-        
 
         # render walls
         for i in range(114):
@@ -198,6 +181,21 @@ class Village():
             if self.troops.status[counter] == 1:
                 self.village[self.troops.y[counter]][self.troops.x[counter]] = self.troops.troops_color
 
+        # Cannon attack
+        self.cannons.cannon_attack_troops(self.king, self.troops)
+                    
+        # render Cannons
+        for i in range(2):
+            for row in range(self.cannons.y[i],self.cannons.y[i]+self.cannons.height):
+                for col in range(self.cannons.x[i],self.cannons.x[i]+self.cannons.width):
+                    if self.cannons.attack_status[i] == 1:
+                        if self.cannons.health[i] > 0:
+                            self.village[row][col] = self.cannons.attack_color
+                        else:
+                            self.village[row][col] = self.cannons.building_color_dead
+                    else:
+                        self.village[row][col] = self.cannons.health_check(i)
+        
         # render Spells
         spells = "----Spells----"
         spells_len = len(spells)
