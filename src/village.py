@@ -164,7 +164,7 @@ class Village():
         self.king.king_color = Back.RED+' '+Style.RESET_ALL
 
         # Barbarians Attack
-        self.troops.move(self.walls, self.huts, self.cannons, self.th, self.rage,self.game_over)
+        self.troops.move(self.walls, self.huts, self.cannons, self.th)
 
         # render Barbarians
         troop_barb = "--Barb--"

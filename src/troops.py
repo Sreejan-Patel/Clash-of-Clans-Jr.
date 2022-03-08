@@ -111,7 +111,7 @@ class Troops():
             return 0
     
     
-    def move_troops(self,i,rage,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp):
+    def move_troops(self,i,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp):
             movement = [w,s,a,d,ne,nw,se,sw]
             movement.sort()
 
@@ -203,7 +203,7 @@ class Troops():
                 else:
                     pass
 
-    def nearest_building(self,i,huts,cannons,th,game_over):
+    def nearest_building(self,i,huts,cannons,th):
         at_least_one = 0
         huts_dist = np.full((5), 100)
         for j in range(5):
@@ -232,9 +232,9 @@ class Troops():
                 self.move_x[i] = th.x
                 self.move_y[i] = th.y 
         else:
-            game_over = 1       
+            pass    
         
-    def move(self,walls,huts,cannons,th,rage,game_over):
+    def move(self,walls,huts,cannons,th):
         """Moving troops."""
         for i in range(10):
             if self.status[i] == 1:
@@ -250,8 +250,8 @@ class Troops():
                                 is_protected = False
                     elif self.entered[i] == 1:
                         temp = 0
-                        self.nearest_building(i,huts,cannons,th,game_over)
-                        self.move_towards_nearest_building(i,rage,walls,huts,cannons,th,temp)
+                        self.nearest_building(i,huts,cannons,th)
+                        self.move_towards_nearest_building(i,walls,huts,cannons,th,temp)
                             
 
                     walls_dist = np.full((114), 100)
@@ -261,8 +261,8 @@ class Troops():
                     # if no wall is broken, move towards the nearest building
                     if is_protected == True:
                         temp = 1
-                        self.nearest_building(i,huts,cannons,th,game_over)
-                        self.move_towards_nearest_building(i,rage,walls,huts,cannons,th,temp)
+                        self.nearest_building(i,huts,cannons,th)
+                        self.move_towards_nearest_building(i,walls,huts,cannons,th,temp)
                     elif is_protected == False and self.entered[i] == 0:
                         wall_dist_min = 100
                         for j in range(114):
@@ -271,9 +271,9 @@ class Troops():
                                     wall_dist_min = walls_dist[j]
                                     self.move_x[i] = walls.x[j]
                                     self.move_y[i] = walls.y[j]
-                        self.move_towards_wall_open(i,rage,self.move_y[i],self.move_x[i],walls,huts,cannons,th)
+                        self.move_towards_wall_open(i,self.move_y[i],self.move_x[i],walls,huts,cannons,th)
 
-    def move_towards_wall_open(self,i,rage,y,x,walls,huts,cannons,th):
+    def move_towards_wall_open(self,i,y,x,walls,huts,cannons,th):
         """Move Towards Wall Open"""
         if self.y[i] == y  and self.x[i] == x and self.health[i] > 0:
             self.entered[i] = 1
@@ -292,15 +292,15 @@ class Troops():
             prev_x = self.x[i]
             prev_y = self.y[i]
             temp = 0
-            self.move_troops(i,rage,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp)
+            self.move_troops(i,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp)
     
-    def move_towards_nearest_building(self,i,rage,walls,huts,cannons,th,temp):
+    def move_towards_nearest_building(self,i,walls,huts,cannons,th,temp):
         """Move Towards Nearest Building"""
         if ((self.y[i] == self.move_y[i]+1 and self.x[i] == self.move_x[i]) or (self.y[i] == self.move_y[i]-1 and self.x[i] == self.move_x[i])
         or (self.y[i] == self.move_y[i] and self.x[i] == self.move_x[i]+1) or (self.y[i] == self.move_y[i] and self.x[i] == self.move_x[i]-1)
         or (self.y[i] == self.move_y[i]+1 and self.x[i] == self.move_x[i]+1) or (self.y[i] == self.move_y[i]-1 and self.x[i] == self.move_x[i]-1)
         or (self.y[i] == self.move_y[i]-1 and self.x[i] == self.move_x[i]+1) or (self.y[i] == self.move_y[i]+1 and self.x[i] == self.move_x[i]-1)) and self.health[i] > 0:
-            self.attack(i,rage,walls,huts,cannons,th)
+            self.attack(i,huts,cannons,th)
         else:
             w = self.euclidean_distance(self.y[i]-1,self.x[i],self.move_y[i],self.move_x[i])
             s = self.euclidean_distance(self.y[i]+1,self.x[i],self.move_y[i],self.move_x[i])
@@ -314,9 +314,9 @@ class Troops():
 
             prev_x = self.x[i]
             prev_y = self.y[i]
-            self.move_troops(i,rage,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp)
+            self.move_troops(i,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp)
 
-    def attack(self,i,rage,walls,huts,cannons,th):
+    def attack(self,i,huts,cannons,th):
         """Attacking."""
         
         hut_l = huts.check_coordinates(self.y[i], self.x[i]-1)
