@@ -43,7 +43,7 @@ class Village():
         self.current_time = time.time()
         self.time_elapsed = 0
 
-        self.game_over = False
+        self.game_result = 0
         
 
         self.render()
@@ -255,14 +255,38 @@ class Village():
             if self.heal_time >= 1:
                 self.heal.status_heal = 3
 
-        if self.game_over == False:
+
+        # check for game ending
+        check_loss = 0
+        for counter in range(10):
+            if self.troops.status[counter] == 2:
+                check_loss += 1
+        if self.king.status == 2:
+            check_loss += 1
+        
+        check_victory = 0
+        for counter in range(2):
+            if self.cannons.health[counter] <= 0:
+                check_victory += 1
+        for counter in range(5):
+            if self.huts.health[counter] <= 0:
+                check_victory += 1
+        if self.th.health <= 0:
+            check_victory += 1
+
+        if check_loss == 11 and check_victory < 8:
+            self.game_result = 2
+        elif check_victory == 8:
+            self.game_result = 1
+
+        if self.game_result == 0:
             self.current_time = time.time()
             self.time_elapsed = math.floor(self.current_time - self.start_time)
             if self.heal.status_heal == 2:
                 self.heal_time = math.floor(self.current_time - self.heal.heal_timer)
             if self.rage.status_rage == 2:
                 self.rage_time = math.floor(self.current_time - self.rage.rage_timer)
-            
+
 
 
         print('\n'.join([''.join(row) for row in self.village]))
