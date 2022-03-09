@@ -286,6 +286,42 @@ class Village():
                 self.heal_time = math.floor(self.current_time - self.heal.heal_timer)
             if self.rage.status_rage == 2:
                 self.rage_time = math.floor(self.current_time - self.rage.rage_timer)
+        elif self.game_result == 1:
+            game_over_screen_height = 16
+            game_over_screen_width = 43
+            self.game_over_screen = [[self.border_color for i in range(game_over_screen_width)] for j in range(game_over_screen_height)]
+
+            game_over = "Victory!"
+            game_over_offset = 18
+            for j in range(0, len(game_over)):
+                self.game_over_screen[1][game_over_offset+j] =  Fore.YELLOW+game_over[j]+Style.RESET_ALL
+
+            time_taken = "Time Taken: {} seconds".format(self.time_elapsed)
+            time_taken_offset = 10
+            for j in range(0, len(time_taken)):
+                self.game_over_screen[5][time_taken_offset+j] = Fore.YELLOW+time_taken[j]+Style.RESET_ALL
+
+            for row in range(0, game_over_screen_height):
+                for col in range(0, game_over_screen_width):
+                    self.village[14+row][19+col] = self.game_over_screen[row][col]
+        elif self.game_result == 2:
+            game_over_screen_height = 16
+            game_over_screen_width = 43
+            self.game_over_screen = [[self.border_color for i in range(game_over_screen_width)] for j in range(game_over_screen_height)]
+
+            game_over = "You Lose!"
+            game_over_offset = 18
+            for j in range(0, len(game_over)):
+                self.game_over_screen[1][game_over_offset+j] =  Fore.YELLOW+game_over[j]+Style.RESET_ALL
+
+            time_taken = "Time Taken: {} seconds".format(self.time_elapsed)
+            time_taken_offset = 10
+            for j in range(0, len(time_taken)):
+                self.game_over_screen[5][time_taken_offset+j] = Fore.YELLOW+time_taken[j]+Style.RESET_ALL
+
+            for row in range(0, game_over_screen_height):
+                for col in range(0, game_over_screen_width):
+                    self.village[14+row][19+col] = self.game_over_screen[row][col]
 
 
 
