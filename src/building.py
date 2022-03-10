@@ -2,6 +2,7 @@ from colorama import Fore , Back , Style
 import numpy as np
 import math
 import time
+import os
 
 class Building():
 
@@ -205,6 +206,7 @@ class Cannon(Building):
                                 self.cannon_ticks[i] += 1
                                 king.king_health -= self.damage
                                 if king.king_health <= 0:
+                                    os.system('afplay sounds/king_die.wav -t 1 &')
                                     king.status = 2
                                     self.cannon_attack[i] = -1
                                     self.cannon_attacking[i] = 0

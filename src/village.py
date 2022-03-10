@@ -251,9 +251,10 @@ class Village():
                 self.king.king_movement_speed = self.king.king_movement_speed * 2
             self.troops.damage = self.troops.damage * 2
             self.troops.time_to_move = 0.5
+            os.system('afplay sounds/rage.wav -t 5 &')
             self.rage.status_rage = 2
         elif self.rage.status_rage == 2:
-            if self.rage_time >= 5:
+            if self.rage_time >= 4:
                 self.rage.status_rage = 3
                 if self.king.status == 1 or self.king.king_movement_speed == 2:
                     self.king.king_attack_damage = self.king.king_attack_damage // 2
@@ -280,15 +281,16 @@ class Village():
             for counter in range(10):
                 if self.troops.status[counter] == 1:
                     self.troops.health_increase_heal(counter)
+            os.system('afplay sounds/heal.wav -t 1 &')
             self.heal.status_heal = 2
         elif self.heal.status_heal == 2:
             if self.heal_time >= 1:
                 self.heal.status_heal = 3
 
         # render timer
-        timer = "--Time--"
+        timer = "-----Time-----"
         timer_len = len(timer)
-        timer_x = (self.cols+self.troops_spells_cols - timer_len - 7*length)
+        timer_x = (self.cols+self.troops_spells_cols - timer_len - 4*length)
         timer_y = 25
         for i in range(timer_len):
             self.village[timer_y][timer_x+i] = Fore.YELLOW+timer[i]+Style.RESET_ALL
