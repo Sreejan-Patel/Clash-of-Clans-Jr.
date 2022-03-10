@@ -291,10 +291,16 @@ class Village():
             game_over_screen_width = 43
             self.game_over_screen = [[self.border_color for i in range(game_over_screen_width)] for j in range(game_over_screen_height)]
 
+            Clash_of_clans = "Clash of clans Jr."
+            Clash_of_clans_len = len(Clash_of_clans)
+            clash_offset = 13
+            for j in range(Clash_of_clans_len):
+                self.game_over_screen[1][clash_offset+j] = Fore.GREEN+Clash_of_clans[j]+Style.RESET_ALL
+
             game_over = "Victory!"
             game_over_offset = 18
             for j in range(0, len(game_over)):
-                self.game_over_screen[1][game_over_offset+j] =  Fore.YELLOW+game_over[j]+Style.RESET_ALL
+                self.game_over_screen[3][game_over_offset+j] =  Fore.YELLOW+game_over[j]+Style.RESET_ALL
 
             time_taken = "Time Taken: {} seconds".format(self.time_elapsed)
             time_taken_offset = 10
@@ -309,10 +315,16 @@ class Village():
             game_over_screen_width = 43
             self.game_over_screen = [[self.border_color for i in range(game_over_screen_width)] for j in range(game_over_screen_height)]
 
+            Clash_of_clans = "Clash of clans Jr."
+            Clash_of_clans_len = len(Clash_of_clans)
+            clash_offset = 13
+            for j in range(Clash_of_clans_len):
+                self.game_over_screen[1][clash_offset+j] = Fore.GREEN+Clash_of_clans[j]+Style.RESET_ALL
+
             game_over = "You Lose!"
             game_over_offset = 18
             for j in range(0, len(game_over)):
-                self.game_over_screen[1][game_over_offset+j] =  Fore.YELLOW+game_over[j]+Style.RESET_ALL
+                self.game_over_screen[3][game_over_offset+j] =  Fore.YELLOW+game_over[j]+Style.RESET_ALL
 
             time_taken = "Time Taken: {} seconds".format(self.time_elapsed)
             time_taken_offset = 10
