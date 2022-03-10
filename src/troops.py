@@ -58,13 +58,13 @@ class Troops():
         if self.count < 10:
             if key == 'i':
                 self.x[self.count] = 7
-                self.y[self.count] = 7
+                self.y[self.count] = 14
                 self.status[self.count] = 1
                 self.timer[self.count] = time.time()
                 self.count += 1
             elif key == 'j':
-                self.x[self.count] = 73
-                self.y[self.count] = 11
+                self.x[self.count] = 7
+                self.y[self.count] = 28
                 self.status[self.count] = 1
                 self.timer[self.count] = time.time()
                 self.count += 1
