@@ -17,7 +17,7 @@ class Troops():
         self.damage = 10
         self.movement_speed = 1
         self.timer = np.full((10), 0)
-        self.time_ticks = np.full((10), -1)
+        self.time_to_move = 1
 
         self.move_x = np.full((10), -1)
         self.move_y = np.full((10), -1)
@@ -57,21 +57,18 @@ class Troops():
                 self.y[self.count] = 7
                 self.status[self.count] = 1
                 self.timer[self.count] = time.time()
-                self.time_ticks[self.count] = 0
                 self.count += 1
             elif key == 'j':
                 self.x[self.count] = 73
                 self.y[self.count] = 11
                 self.status[self.count] = 1
                 self.timer[self.count] = time.time()
-                self.time_ticks[self.count] = 0
                 self.count += 1
             elif key == 'k':
                 self.x[self.count] = 32
                 self.y[self.count] = 12
                 self.status[self.count] = 1
                 self.timer[self.count] = time.time()
-                self.time_ticks[self.count] = 0
                 self.count += 1
             else:
                 pass
@@ -248,8 +245,8 @@ class Troops():
         """Moving troops."""
         for i in range(10):
             if self.status[i] == 1:
-                if math.floor(time.time() - self.timer[i]) == self.time_ticks[i]:
-                    self.time_ticks[i] += 1
+                if time.time() - self.timer[i] >= self.time_to_move:
+                    self.timer[i] = time.time()
                     # first check if the troop is in the same position as the nearest broken wall , if not move there
                     is_wall = np.zeros((114), type(int))
                     is_protected = True
