@@ -1,6 +1,7 @@
 import time
 from colorama import Fore, Style, Back
 import numpy as np
+import os
 import math
 from src.utlis import Utils
 
@@ -362,56 +363,73 @@ class Troops():
         if hut_l != -1:
             huts.health_decrease(hut_l, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif hut_r != -1:
             huts.health_decrease(hut_r, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif hut_u != -1:
             huts.health_decrease(hut_u, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif hut_d != -1:
             huts.health_decrease(hut_d, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif hut_ne != -1:
             huts.health_decrease(hut_ne, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif hut_nw != -1:
             huts.health_decrease(hut_nw, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif hut_se != -1:
             huts.health_decrease(hut_se, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif hut_sw != -1:
             huts.health_decrease(hut_sw, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
 
         elif cannon_l != -1:
             cannons.health_decrease(cannon_l, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif cannon_r != -1:
             cannons.health_decrease(cannon_r, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif cannon_u != -1:
             cannons.health_decrease(cannon_u, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif cannon_d != -1:
             cannons.health_decrease(cannon_d, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif cannon_ne != -1:
             cannons.health_decrease(cannon_ne, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif cannon_nw != -1:
             cannons.health_decrease(cannon_nw, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif cannon_se != -1:
             cannons.health_decrease(cannon_se, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif cannon_sw != -1:
             cannons.health_decrease(cannon_sw, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
 
         elif th_l != -1 or th_r != -1 or th_u != -1 or th_d != -1 or th_ne != -1 or th_nw != -1 or th_se != -1 or th_sw != -1:
             th.health_decrease(self.damage)  
-            self.attack_status[i] = 1     
+            self.attack_status[i] = 1 
+            os.system('afplay sounds/barb_attack.wav &')    
 
     def attack_wall(self,i,walls):
         """Attacking."""
@@ -428,27 +446,35 @@ class Troops():
         if wall_l != -1:
             walls.health_decrease(wall_l, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif wall_r != -1:
             walls.health_decrease(wall_r, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif wall_u != -1:
             walls.health_decrease(wall_u, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif wall_d != -1:
             walls.health_decrease(wall_d, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif wall_ne != -1:
             walls.health_decrease(wall_ne, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif wall_nw != -1:
             walls.health_decrease(wall_nw, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif wall_se != -1:
             walls.health_decrease(wall_se, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         elif wall_sw != -1:
             walls.health_decrease(wall_sw, self.damage)
             self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
         
             
 

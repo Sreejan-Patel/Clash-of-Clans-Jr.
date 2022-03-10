@@ -119,7 +119,6 @@ class Village():
         for i in range(114):
             self.village[self.walls.y[i]][self.walls.x[i]] = self.walls.health_check(i)
 
-
         # render Troops
         length = 1
         troop_spell_color = Back.LIGHTBLACK_EX+' '+Style.RESET_ALL
@@ -127,6 +126,14 @@ class Village():
         for i in range(self.rows+2):
             for j in range(self.cols+2*length, self.cols+self.troops_spells_cols+2*length):
                 self.village[i][j] = troop_spell_color
+
+        # render clash of clans
+        clash = "Clash of Clans Jr."
+        clash_len = len(clash)
+        clash_x = (self.cols+6)
+        clash_y = 1
+        for i in range(clash_len):
+            self.village[clash_y][clash_x+i] = Fore.GREEN+clash[i]+Style.RESET_ALL
 
         troop = "----Troops----"
         troop_len = len(troop)
@@ -206,6 +213,7 @@ class Village():
                 for col in range(self.cannons.x[i],self.cannons.x[i]+self.cannons.width):
                     if self.cannons.attack_status[i] == 1:
                         if self.cannons.health[i] > 0:
+                            os.system('afplay sounds/cannon_attack.wav &')
                             self.village[row][col] = self.cannons.attack_color
                         else:
                             self.village[row][col] = self.cannons.building_color_dead
@@ -270,6 +278,20 @@ class Village():
         elif self.heal.status_heal == 2:
             if self.heal_time >= 1:
                 self.heal.status_heal = 3
+
+        # render timer
+        timer = "--Time--"
+        timer_len = len(timer)
+        timer_x = (self.cols+self.troops_spells_cols - timer_len - 7*length)
+        timer_y = 25
+        for i in range(timer_len):
+            self.village[timer_y][timer_x+i] = Fore.YELLOW+timer[i]+Style.RESET_ALL
+
+        time_elapsed_len = len(str(self.time_elapsed))
+        time_elapsed_y = 27
+        time_elapsed_x = self.cols+self.troops_spells_cols - 11
+        for i in range(time_elapsed_len):
+            self.village[time_elapsed_y][time_elapsed_x+i] = Fore.CYAN+str(self.time_elapsed)[i]+Style.RESET_ALL
 
 
         # check for game ending

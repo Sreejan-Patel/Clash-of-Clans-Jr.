@@ -1,7 +1,6 @@
 from colorama import Fore, Style, Back
 import numpy as np
-from src.building import TownHall, Hut, Cannon
-from src.walls import Walls
+import os
 from src.utlis import Utils
 
 class King():
@@ -237,33 +236,46 @@ class King():
 
         if wall_l != -1:
             walls.health_decrease(wall_l, self.king_attack_damage)
+            os.system('afplay sounds/king_attack.wav &')
         elif wall_r != -1:
             walls.health_decrease(wall_r, self.king_attack_damage)
+            os.system('afplay sounds/king_attack.wav &')
         elif wall_u != -1:
             walls.health_decrease(wall_u, self.king_attack_damage)
+            os.system('afplay sounds/king_attack.wav &')
         elif wall_d != -1:
             walls.health_decrease(wall_d, self.king_attack_damage)
+            os.system('afplay sounds/king_attack.wav &')
 
         elif hut_l != -1:
             huts.health_decrease(hut_l, self.king_attack_damage)
+            os.system('afplay sounds/king_attack.wav &')
         elif hut_r != -1:
             huts.health_decrease(hut_r, self.king_attack_damage)
+            os.system('afplay sounds/king_attack.wav &')
         elif hut_u != -1:
             huts.health_decrease(hut_u, self.king_attack_damage)
+            os.system('afplay sounds/king_attack.wav &')
         elif hut_d != -1:
             huts.health_decrease(hut_d, self.king_attack_damage)
+            os.system('afplay sounds/king_attack.wav &')
 
         elif cannon_l != -1:
             cannons.health_decrease(cannon_l, self.king_attack_damage)
+            os.system('afplay sounds/king_attack.wav &')
         elif cannon_r != -1:
             cannons.health_decrease(cannon_r, self.king_attack_damage)
+            os.system('afplay sounds/king_attack.wav &')
         elif cannon_u != -1:
             cannons.health_decrease(cannon_u, self.king_attack_damage)
+            os.system('afplay sounds/king_attack.wav &')
         elif cannon_d != -1:
             cannons.health_decrease(cannon_d, self.king_attack_damage)
+            os.system('afplay sounds/king_attack.wav &')
 
         elif th_l != -1 or th_r != -1 or th_u != -1 or th_d != -1:
             th.health_decrease(self.king_attack_damage)
+            os.system('afplay sounds/king_attack.wav &')
         
     def health_check(self):
         """Checking health."""
