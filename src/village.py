@@ -63,7 +63,10 @@ class Village():
                 pass
         if(key == ' '):
             if self.king.status == 1:
-                self.king.attack(self.walls, self.huts, self.cannons, self.th)
+                if self.king.leviathan == False:
+                    self.king.attack(self.walls, self.huts, self.cannons, self.th)
+                else:
+                    self.king.attack_leviathan(self.walls, self.huts, self.cannons, self.th)
         if(key == 'i' or 'j' or 'k'):
             if self.troops.count < 10:
                 self.troops.spawn(key)
@@ -73,6 +76,9 @@ class Village():
             self.rage.cast()
         if(key == 'h' and self.heal.status_heal == 0):
             self.heal.cast()
+        if(key == 'l'):
+            if self.king.status == 1:
+                self.king.leviathan = True
         return key
 
     def initialize_replay(self):

@@ -1,6 +1,7 @@
 from colorama import Fore, Style, Back
 import numpy as np
 import os
+import math
 from src.utlis import Utils
 
 class King():
@@ -21,7 +22,8 @@ class King():
 
         self.king_attack_damage = 20            # damage per each attack
 
-
+        self.leviathan_range = 4                # range of the leviathan    
+        self.leviathan = False
 
     def move(self, key, walls, huts, cannons, th, rage):
         """Moving king."""
@@ -209,6 +211,24 @@ class King():
         self.status = 1
         self.x = 5
         self.y = 5
+    
+    def euclidean_distance_th(self, y1, x1, y2, x2):
+        '''
+        This function calculates the euclidean distance between two points (considering the middle y and x coordinates of the th)
+        '''
+        return math.sqrt((y1-(y2+1))**2 + (x1-(x2+1))**2)
+
+    def euclidean_distance_cannons(self, y1, x1, y2, x2):
+        '''
+        This function calculates the euclidean distance between two points (considering the middle y and x coordinates of the cannons)
+        '''
+        return math.sqrt((y1-(y2+1))**2 + (x1-(x2+1))**2)
+    
+    def euclidean_distance(self, y1, x1, y2, x2):
+        '''
+        This function calculates the euclidean distance between two points 
+        '''
+        return math.sqrt((y1-y2)**2 + (x1-x2)**2)
         
     def attack(self, walls, huts, cannons, th):
         """Attacking."""
@@ -276,6 +296,41 @@ class King():
         elif th_l != -1 or th_r != -1 or th_u != -1 or th_d != -1:
             th.health_decrease(self.king_attack_damage)
             os.system('afplay sounds/king_attack.wav &')
+
+    def attack_leviathan(self,walls,huts,cannons,th):
+        """Attacking leviathan."""
+        self.king_color = Back.BLACK+' '+Style.RESET_ALL
+
+        wall_euclidian_distance = np.full(114, np.inf)
+        for i in range(114):
+            wall_euclidian_distance[i] = self.euclidean_distance(self.y, self.x, walls.y[i], walls.x[i])
+        
+        huts_euclidian_distance = np.full(5, np.inf)
+        for i in range(5):
+            huts_euclidian_distance[i] = self.euclidean_distance(self.y, self.x, huts.y[i], huts.x[i])
+        
+        cannons_euclidian_distance = np.full(2, np.inf)
+        for i in range(2):
+            cannons_euclidian_distance[i] = self.euclidean_distance_cannons(self.y, self.x, cannons.y[i], cannons.x[i])
+
+        th_euclidian_distance = 1000
+        th_euclidian_distance = self.euclidean_distance_th(self.y, self.x, th.y, th.x)
+
+        for i in range(114):
+            if wall_euclidian_distance[i] <= self.leviathan_range:
+                walls.health[i] = walls.health[i] - self.king_attack_damage
+        
+        for i in range(5):
+            if huts_euclidian_distance[i] <= self.leviathan_range:
+                huts.health[i] = huts.health[i] - self.king_attack_damage
+        
+        for i in range(2):
+            if cannons_euclidian_distance[i] <= self.leviathan_range:
+                cannons.health[i] = cannons.health[i] - self.king_attack_damage
+        
+        if th_euclidian_distance <= self.leviathan_range:
+            th.health = th.health - self.king_attack_damage
+        
         
     def health_check(self):
         """Checking health."""
