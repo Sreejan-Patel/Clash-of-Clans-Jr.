@@ -44,7 +44,9 @@ class Village():
         self.time_elapsed = 0
 
         self.game_result = 0
+        self.replay_number = 0
         
+        self.initialize_replay()
 
         self.render()
 
@@ -72,6 +74,15 @@ class Village():
         if(key == 'h' and self.heal.status_heal == 0):
             self.heal.cast()
         return key
+
+    def initialize_replay(self):
+        """Initialize replay."""
+        fname = 'replay_'+str(self.replay_number)+'.txt'
+        fpath = './replays/'+fname
+        while os.path.exists(fpath):
+            self.replay_number += 1
+            fname = 'replay_'+str(self.replay_number)+'.txt'
+            fpath = './replays/'+fname
 
     
 
@@ -305,7 +316,7 @@ class Village():
                 self.game_over_screen[3][game_over_offset+j] =  Fore.YELLOW+game_over[j]+Style.RESET_ALL
 
             time_taken = "Time Taken: {} seconds".format(self.time_elapsed)
-            time_taken_offset = 10
+            time_taken_offset = 11
             for j in range(0, len(time_taken)):
                 self.game_over_screen[5][time_taken_offset+j] = Fore.YELLOW+time_taken[j]+Style.RESET_ALL
 
@@ -329,7 +340,7 @@ class Village():
                 self.game_over_screen[3][game_over_offset+j] =  Fore.YELLOW+game_over[j]+Style.RESET_ALL
 
             time_taken = "Time Taken: {} seconds".format(self.time_elapsed)
-            time_taken_offset = 10
+            time_taken_offset = 11
             for j in range(0, len(time_taken)):
                 self.game_over_screen[5][time_taken_offset+j] = Fore.YELLOW+time_taken[j]+Style.RESET_ALL
 
@@ -337,6 +348,11 @@ class Village():
                 for col in range(0, game_over_screen_width):
                     self.village[14+row][19+col] = self.game_over_screen[row][col]
 
+        # replay storing
+        file_path = "./replays/replay_"+str(self.replay_number)+".txt"
+        with open(file_path, "a") as f:
+            f.write('\n'.join([''.join(row) for row in self.village]))
+            f.write('\n')
 
 
         print('\n'.join([''.join(row) for row in self.village]))
