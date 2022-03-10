@@ -6,6 +6,8 @@ while(True):
     key = village.get_key()
     if key == 'q':
         break
-    else:
+    elif village.game_result == 0:
         village.render()
+    else:
+        break
     
