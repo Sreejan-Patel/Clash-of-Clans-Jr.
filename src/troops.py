@@ -19,6 +19,9 @@ class Troops():
         self.timer = np.full((10), 0)
         self.time_to_move = 1
 
+        self.attack_status = np.zeros((10), type(int))
+        self.attack_color = Back.BLACK+' '+Style.RESET_ALL
+
         self.move_x = np.full((10), -1)
         self.move_y = np.full((10), -1)
 
@@ -244,6 +247,8 @@ class Troops():
     def move(self,walls,huts,cannons,th):
         """Moving troops."""
         for i in range(10):
+            self.attack_status[i] = 0
+        for i in range(10):
             if self.status[i] == 1:
                 if time.time() - self.timer[i] >= self.time_to_move:
                     self.timer[i] = time.time()
@@ -356,40 +361,57 @@ class Troops():
 
         if hut_l != -1:
             huts.health_decrease(hut_l, self.damage)
+            self.attack_status[i] = 1
         elif hut_r != -1:
             huts.health_decrease(hut_r, self.damage)
+            self.attack_status[i] = 1
         elif hut_u != -1:
             huts.health_decrease(hut_u, self.damage)
+            self.attack_status[i] = 1
         elif hut_d != -1:
             huts.health_decrease(hut_d, self.damage)
+            self.attack_status[i] = 1
         elif hut_ne != -1:
             huts.health_decrease(hut_ne, self.damage)
+            self.attack_status[i] = 1
         elif hut_nw != -1:
             huts.health_decrease(hut_nw, self.damage)
+            self.attack_status[i] = 1
         elif hut_se != -1:
             huts.health_decrease(hut_se, self.damage)
+            self.attack_status[i] = 1
         elif hut_sw != -1:
             huts.health_decrease(hut_sw, self.damage)
+            self.attack_status[i] = 1
 
         elif cannon_l != -1:
             cannons.health_decrease(cannon_l, self.damage)
+            self.attack_status[i] = 1
         elif cannon_r != -1:
             cannons.health_decrease(cannon_r, self.damage)
+            self.attack_status[i] = 1
         elif cannon_u != -1:
             cannons.health_decrease(cannon_u, self.damage)
+            self.attack_status[i] = 1
         elif cannon_d != -1:
             cannons.health_decrease(cannon_d, self.damage)
+            self.attack_status[i] = 1
         elif cannon_ne != -1:
             cannons.health_decrease(cannon_ne, self.damage)
+            self.attack_status[i] = 1
         elif cannon_nw != -1:
             cannons.health_decrease(cannon_nw, self.damage)
+            self.attack_status[i] = 1
         elif cannon_se != -1:
             cannons.health_decrease(cannon_se, self.damage)
+            self.attack_status[i] = 1
         elif cannon_sw != -1:
             cannons.health_decrease(cannon_sw, self.damage)
+            self.attack_status[i] = 1
 
         elif th_l != -1 or th_r != -1 or th_u != -1 or th_d != -1 or th_ne != -1 or th_nw != -1 or th_se != -1 or th_sw != -1:
-            th.health_decrease(self.damage)       
+            th.health_decrease(self.damage)  
+            self.attack_status[i] = 1     
 
     def attack_wall(self,i,walls):
         """Attacking."""
@@ -405,20 +427,28 @@ class Troops():
             
         if wall_l != -1:
             walls.health_decrease(wall_l, self.damage)
+            self.attack_status[i] = 1
         elif wall_r != -1:
             walls.health_decrease(wall_r, self.damage)
+            self.attack_status[i] = 1
         elif wall_u != -1:
             walls.health_decrease(wall_u, self.damage)
+            self.attack_status[i] = 1
         elif wall_d != -1:
             walls.health_decrease(wall_d, self.damage)
+            self.attack_status[i] = 1
         elif wall_ne != -1:
             walls.health_decrease(wall_ne, self.damage)
+            self.attack_status[i] = 1
         elif wall_nw != -1:
             walls.health_decrease(wall_nw, self.damage)
+            self.attack_status[i] = 1
         elif wall_se != -1:
             walls.health_decrease(wall_se, self.damage)
+            self.attack_status[i] = 1
         elif wall_sw != -1:
             walls.health_decrease(wall_sw, self.damage)
+            self.attack_status[i] = 1
         
             
 
