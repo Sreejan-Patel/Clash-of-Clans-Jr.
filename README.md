@@ -98,5 +98,17 @@ Checkout the instruction manual and functionalities of the game below -
 - Terminal - ZSH
 - Processor - M1
 
+--- 
+# Libraries Used
+- colorama
+- math
+- os
+- numpy
+- sys
+- tty
+- termios
+- signal
+- time
+
 
 
