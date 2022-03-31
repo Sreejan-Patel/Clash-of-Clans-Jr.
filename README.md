@@ -15,7 +15,7 @@ Checkout the instruction manual and functionalities of the game below -
 - **TownHall** 
     - 4x3 tiles is the central and most important building in the base
 - **Cannons** 
-    - 2 Cannons of 2x3 are the weapons of the defender which targets the enemy's troops
+    - 2 Cannons of 2x3 are the weapons of the defender which targets the enemy's barbarians
     - The range of the cannons are 5 tiles from the centre of the building
     - Shoots once per second
 
@@ -28,7 +28,7 @@ Checkout the instruction manual and functionalities of the game below -
     - Black Color
 
 - **Spawning Points**
-    - the enemy troops spawn at these points in the village
+    - the enemy barbarians spawn at these points in the village
     - Barbarians have 3 spawning points defined which activates by passing the key's - i , j , k
     - King has a separate spawning point defined which activates by passing the key - b
 
@@ -69,7 +69,7 @@ Checkout the instruction manual and functionalities of the game below -
 - **Victory**
     - The enemy's win when the whole base is destroyed (except the walls)
 - **Loss** 
-    - the enemy's lose when all their troops are dead and they haven't destroyed the whole base
+    - the enemy's lose when all their barbarians are dead and they haven't destroyed the whole base
 ## Replay
 - Each game played is stored in the replays folder for the user to look at later
 - Running the replay.py and specifying the game number allows the user to look at the replay of that game

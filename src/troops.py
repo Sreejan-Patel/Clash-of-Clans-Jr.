@@ -5,11 +5,11 @@ import os
 import math
 from src.utlis import Utils
 
-class Troops():
+class Barbarians():
 
     def __init__(self,start,end):
-        self.troops_color = Back.BLUE+' '+Style.RESET_ALL
-        self.troops_color_low_health = Back.LIGHTBLUE_EX+' '+Style.RESET_ALL
+        self.barbarians_color = Back.BLUE+' '+Style.RESET_ALL
+        self.barbarians_color_low_health = Back.LIGHTBLUE_EX+' '+Style.RESET_ALL
         self.x = np.zeros((10), type(int))
         self.y = np.zeros((10), type(int))
         self.status = np.zeros((10), type(int))
@@ -31,7 +31,7 @@ class Troops():
         self.initialize(start,end)
 
     def initialize(self,start,end):
-        """Initializing troops."""
+        """Initializing barbarians."""
         length = 2
         for i in range(10):
             if self.status[i] == 0:
@@ -39,7 +39,7 @@ class Troops():
                 self.y[i] = 11
 
     def health_increase_heal(self,i):
-        """Increase troops's health"""
+        """Increase barbarians's health"""
         self.health[i] = 1.5 * self.health[i]   # heal 150% times
         if self.health[i] > 30:
             self.health[i] = 30
@@ -49,12 +49,12 @@ class Troops():
         This function checks the health of the hut and returns the color of the building
         '''
         if self.health[i] <= ((50/100)*30):
-            return self.troops_color_low_health
+            return self.barbarians_color_low_health
         else:
-            return self.troops_color
+            return self.barbarians_color
 
     def spawn(self, key):
-        """Spawning troops."""
+        """Spawning barbarians."""
         if self.count < 10:
             if key == 'i':
                 self.x[self.count] = 7
@@ -122,7 +122,7 @@ class Troops():
             return 0
     
     
-    def move_troops(self,i,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp):
+    def move_barbarians(self,i,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp):
             movement = [w,s,a,d,ne,nw,se,sw]
             movement.sort()
 
@@ -246,7 +246,7 @@ class Troops():
             pass    
         
     def move(self,walls,huts,cannons,th):
-        """Moving troops."""
+        """Moving barbarians."""
         for i in range(10):
             self.attack_status[i] = 0
         for i in range(10):
@@ -305,7 +305,7 @@ class Troops():
             prev_x = self.x[i]
             prev_y = self.y[i]
             temp = 0
-            self.move_troops(i,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp)
+            self.move_barbarians(i,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp)
     
     def move_towards_nearest_building(self,i,walls,huts,cannons,th,temp):
         """Move Towards Nearest Building"""
@@ -327,7 +327,7 @@ class Troops():
 
             prev_x = self.x[i]
             prev_y = self.y[i]
-            self.move_troops(i,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp)
+            self.move_barbarians(i,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp)
 
     def attack(self,i,huts,cannons,th):
         """Attacking."""
@@ -476,11 +476,120 @@ class Troops():
             self.attack_status[i] = 1
             os.system('afplay sounds/barb_attack.wav &')
         
-            
+class Archers():
+
+    def __init__(self,start,end):
+        self.archers_color = Back.CYAN+' '+Style.RESET_ALL
+        self.archers_color_low_health = Back.LIGHTCYAN_EX+' '+Style.RESET_ALL
+        self.x = np.zeros((5), type(int))
+        self.y = np.zeros((5), type(int))
+        self.status = np.zeros((5), type(int))
+        self.health = np.full((5), 15)
+        self.count = 0
+        self.damage = 5
+        self.movement_speed = 1
+        self.timer = np.full((5), 0)
+        self.time_to_move = 1
+
+        self.attack_status = np.zeros((5), type(int))
+        self.attack_color = Back.BLACK+' '+Style.RESET_ALL
+
+        self.move_x = np.full((5), -1)
+        self.move_y = np.full((5), -1)
+
+        self.entered = np.zeros((5), type(int))
+
+        self.initialize(start,end)
+
+    def initialize(self,start,end):
+        """Initializing Archers."""
+        length = 3
+        for i in range(5):
+            if self.status[i] == 0:
+                self.x[i] = start + i*length + 3*length
+                self.y[i] = 15
+
+    def spawn(self, key):
+        """Spawning Archers."""
+        if self.count < 5:
+            if key == 'm':
+                self.x[self.count] = 7
+                self.y[self.count] = 14
+                self.status[self.count] = 1
+                self.timer[self.count] = time.time()
+                self.count += 1
+            elif key == 'n':
+                self.x[self.count] = 7
+                self.y[self.count] = 28
+                self.status[self.count] = 1
+                self.timer[self.count] = time.time()
+                self.count += 1
+            elif key == 'o':
+                self.x[self.count] = 32
+                self.y[self.count] = 12
+                self.status[self.count] = 1
+                self.timer[self.count] = time.time()
+                self.count += 1
+            else:
+                pass
 
 
+class Loons():
 
+    def __init__(self,start,end):
+        self.loons_color = Back.CYAN+' '+Style.RESET_ALL
+        self.loons_color_low_health = Back.LIGHTCYAN_EX+' '+Style.RESET_ALL
+        self.x = np.zeros((3), type(int))
+        self.y = np.zeros((3), type(int))
+        self.status = np.zeros((3), type(int))
+        self.health = np.full((3), 30)
+        self.count = 0
+        self.damage = 20
+        self.movement_speed = 1
+        self.timer = np.full((3), 0)
+        self.time_to_move = 1
 
+        self.attack_status = np.zeros((3), type(int))
+        self.attack_color = Back.BLACK+' '+Style.RESET_ALL
+
+        self.move_x = np.full((3), -1)
+        self.move_y = np.full((3), -1)
+
+        self.entered = np.zeros((3), type(int))
+
+        self.initialize(start,end)
+
+    def initialize(self,start,end):
+        """Initializing Loons."""
+        length = 3
+        for i in range(3):
+            if self.status[i] == 0:
+                self.x[i] = start + i*length + 3*length + 2
+                self.y[i] = 19
+
+    def spawn(self, key):
+        """Spawning Loons."""
+        if self.count < 3:
+            if key == 'f':
+                self.x[self.count] = 7
+                self.y[self.count] = 14
+                self.status[self.count] = 1
+                self.timer[self.count] = time.time()
+                self.count += 1
+            elif key == 'g':
+                self.x[self.count] = 7
+                self.y[self.count] = 28
+                self.status[self.count] = 1
+                self.timer[self.count] = time.time()
+                self.count += 1
+            elif key == 'h':
+                self.x[self.count] = 32
+                self.y[self.count] = 12
+                self.status[self.count] = 1
+                self.timer[self.count] = time.time()
+                self.count += 1
+            else:
+                pass
     
 
 

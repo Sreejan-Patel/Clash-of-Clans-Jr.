@@ -1,7 +1,7 @@
 from colorama import Fore, Style, Back
 from src.input import Get, input_to
 from src.king import King
-from src.troops import Troops
+from src.troops import Archers, Barbarians, Loons
 from src.spell import Heal, Rage
 from src.building import Hut, Cannon, TownHall
 from src.walls import Walls
@@ -25,12 +25,14 @@ class Village():
         self.getch = Get()
 
         self.king = King(self.cols+self.troops_spells_cols - 11,7)
-        self.troops = Troops(self.cols,self.cols+self.troops_spells_cols)
+        self.barbarians = Barbarians(self.cols,self.cols+self.troops_spells_cols)
+        self.archers = Archers(self.cols,self.cols+self.troops_spells_cols)
+        self.loons = Loons(self.cols,self.cols+self.troops_spells_cols)
 
-        self.rage = Rage(self.cols+self.troops_spells_cols - 11,19)
+        self.rage = Rage(self.cols+self.troops_spells_cols - 11,25)
         self.rage_time = 0
         self.rage_color = Back.LIGHTMAGENTA_EX+' '+Style.RESET_ALL
-        self.heal = Heal(self.cols+self.troops_spells_cols - 11,23)
+        self.heal = Heal(self.cols+self.troops_spells_cols - 11,29)
         self.heal_time = 0
         self.heal_color = Back.LIGHTYELLOW_EX+' '+Style.RESET_ALL
 
@@ -68,10 +70,23 @@ class Village():
                 else:
                     self.king.attack_leviathan(self.walls, self.huts, self.cannons, self.th)
         if(key == 'i' or 'j' or 'k'):
-            if self.troops.count < 10:
-                self.troops.spawn(key)
+            if self.barbarians.count < 10:
+                self.barbarians.spawn(key)
             else:
                 pass
+        if(key == 'm' or 'n' or 'o'):
+            if self.archers.count < 5:
+                self.archers.spawn(key)
+            else:
+                pass
+        if(key == 'f' or 'g' or 'h'):
+            if self.loons.count < 3:
+                self.loons.spawn(key)
+            else:
+                pass        
+        
+        
+                
         if(key == 'r' and self.rage.status_rage == 0):
             self.rage.cast()
         if(key == 'h' and self.heal.status_heal == 0):
@@ -125,7 +140,7 @@ class Village():
         for i in range(114):
             self.village[self.walls.y[i]][self.walls.x[i]] = self.walls.health_check(i)
 
-        # render Troops
+        # render barbarians
         length = 1
         troop_spell_color = Back.LIGHTBLACK_EX+' '+Style.RESET_ALL
 
@@ -188,7 +203,7 @@ class Village():
         self.king.king_color = Back.RED+' '+Style.RESET_ALL
 
         # Barbarians Attack
-        self.troops.move(self.walls, self.huts, self.cannons, self.th)
+        self.barbarians.move(self.walls, self.huts, self.cannons, self.th)
 
         # render Barbarians
         troop_barb = "--Barb--"
@@ -202,16 +217,52 @@ class Village():
               
         
         for counter in range(10):
-            if self.troops.status[counter] == 0:
-                self.village[self.troops.y[counter]][self.troops.x[counter]] = self.troops.troops_color
-            if self.troops.status[counter] == 1:
-                if self.troops.attack_status[counter] == 0:
-                    self.village[self.troops.y[counter]][self.troops.x[counter]] = self.troops.health_check(counter)
-                elif self.troops.attack_status[counter] == 1:
-                    self.village[self.troops.y[counter]][self.troops.x[counter]] = self.troops.attack_color
+            if self.barbarians.status[counter] == 0:
+                self.village[self.barbarians.y[counter]][self.barbarians.x[counter]] = self.barbarians.barbarians_color
+            if self.barbarians.status[counter] == 1:
+                if self.barbarians.attack_status[counter] == 0:
+                    self.village[self.barbarians.y[counter]][self.barbarians.x[counter]] = self.barbarians.health_check(counter)
+                elif self.barbarians.attack_status[counter] == 1:
+                    self.village[self.barbarians.y[counter]][self.barbarians.x[counter]] = self.barbarians.attack_color
+
+        # render Archers
+        troop_archer = "--Archer--"
+        troop_archer_len = len(troop_archer)
+        troop_archer_x = (self.cols+self.troops_spells_cols - troop_king_len -8*length)
+        troop_archer_y = 13
+        for i in range(troop_archer_len):
+            self.village[troop_archer_y][troop_archer_x+i] = Fore.YELLOW+troop_archer[i]+Style.RESET_ALL
+
+        for counter in range(5):
+            if self.archers.status[counter] == 0:
+                self.village[self.archers.y[counter]][self.archers.x[counter]] = self.archers.archers_color
+            if self.archers.status[counter] == 1:
+                if self.archers.attack_status[counter] == 0:
+                    self.village[self.archers.y[counter]][self.archers.x[counter]] = self.archers.health_check(counter)
+                elif self.archers.attack_status[counter] == 1:
+                    self.village[self.archers.y[counter]][self.archers.x[counter]] = self.archers.attack_color
+        
+        # render Loons
+        troop_loon = "--Loon--"
+        troop_loon_len = len(troop_loon)
+        troop_loon_x = (self.cols+self.troops_spells_cols - troop_king_len -7*length)
+        troop_loon_y = 17
+        for i in range(troop_loon_len):
+            self.village[troop_loon_y][troop_loon_x+i] = Fore.YELLOW+troop_loon[i]+Style.RESET_ALL
+
+        for counter in range(3):
+            if self.loons.status[counter] == 0:
+                self.village[self.loons.y[counter]][self.loons.x[counter]] = self.loons.loons_color
+            if self.loons.status[counter] == 1:
+                if self.loons.attack_status[counter] == 0:
+                    self.village[self.loons.y[counter]][self.loons.x[counter]] = self.loons.health_check(counter)
+                elif self.loons.attack_status[counter] == 1:
+                    self.village[self.loons.y[counter]][self.loons.x[counter]] = self.loons.attack_color
+
+
 
         # Cannon attack
-        self.cannons.cannon_attack_troops(self.king, self.troops)
+        self.cannons.cannon_attack_barbarians(self.king, self.barbarians)
                     
         # render Cannons
         for i in range(2):
@@ -230,7 +281,7 @@ class Village():
         spells = "----Spells----"
         spells_len = len(spells)
         spells_x = (self.cols+self.troops_spells_cols - spells_len - 4*length)
-        spells_y = 15
+        spells_y = 21
         for i in range(spells_len):
             self.village[spells_y][spells_x+i] = Fore.YELLOW+spells[i]+Style.RESET_ALL
 
@@ -238,7 +289,7 @@ class Village():
         rage = "--Rage--"
         rage_len = len(rage)
         rage_x = (self.cols+self.troops_spells_cols - rage_len - 7*length)
-        rage_y = 17
+        rage_y = 23
         for i in range(rage_len):
             self.village[rage_y][rage_x+i] = Fore.YELLOW+rage[i]+Style.RESET_ALL
 
@@ -249,8 +300,8 @@ class Village():
             if self.king.status == 1:
                 self.king.king_attack_damage = self.king.king_attack_damage * 2
                 self.king.king_movement_speed = self.king.king_movement_speed * 2
-            self.troops.damage = self.troops.damage * 2
-            self.troops.time_to_move = 0.5
+            self.barbarians.damage = self.barbarians.damage * 2
+            self.barbarians.time_to_move = 0.5
             os.system('afplay sounds/rage.wav -t 5 &')
             self.rage.status_rage = 2
         elif self.rage.status_rage == 2:
@@ -259,8 +310,8 @@ class Village():
                 if self.king.status == 1 or self.king.king_movement_speed == 2:
                     self.king.king_attack_damage = self.king.king_attack_damage // 2
                     self.king.king_movement_speed = self.king.king_movement_speed // 2
-                self.troops.time_to_move = 1
-                self.troops.damage = self.troops.damage // 2
+                self.barbarians.time_to_move = 1
+                self.barbarians.damage = self.barbarians.damage // 2
 
 
 
@@ -268,7 +319,7 @@ class Village():
         heal = "--Heal--"
         heal_len = len(heal)
         heal_x = (self.cols+self.troops_spells_cols - heal_len - 7*length)
-        heal_y = 21
+        heal_y = 27
         for i in range(heal_len):
             self.village[heal_y][heal_x+i] = Fore.YELLOW+heal[i]+Style.RESET_ALL
 
@@ -279,8 +330,8 @@ class Village():
             if self.king.status == 1:
                 self.king.health_increase_heal()
             for counter in range(10):
-                if self.troops.status[counter] == 1:
-                    self.troops.health_increase_heal(counter)
+                if self.barbarians.status[counter] == 1:
+                    self.barbarians.health_increase_heal(counter)
             os.system('afplay sounds/heal.wav -t 1 &')
             self.heal.status_heal = 2
         elif self.heal.status_heal == 2:
@@ -291,12 +342,12 @@ class Village():
         timer = "-----Time-----"
         timer_len = len(timer)
         timer_x = (self.cols+self.troops_spells_cols - timer_len - 4*length)
-        timer_y = 25
+        timer_y = 31
         for i in range(timer_len):
             self.village[timer_y][timer_x+i] = Fore.YELLOW+timer[i]+Style.RESET_ALL
 
         time_elapsed_len = len(str(self.time_elapsed))
-        time_elapsed_y = 27
+        time_elapsed_y = 33
         time_elapsed_x = self.cols+self.troops_spells_cols - 11
         for i in range(time_elapsed_len):
             self.village[time_elapsed_y][time_elapsed_x+i] = Fore.CYAN+str(self.time_elapsed)[i]+Style.RESET_ALL
@@ -305,7 +356,7 @@ class Village():
         # check for game ending
         check_loss = 0
         for counter in range(10):
-            if self.troops.status[counter] == 2:
+            if self.barbarians.status[counter] == 2:
                 check_loss += 1
         if self.king.status == 2:
             check_loss += 1

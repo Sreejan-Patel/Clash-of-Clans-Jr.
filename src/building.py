@@ -146,9 +146,9 @@ class Cannon(Building):
         '''
         return math.sqrt((y1-(y2+1))**2 + (x1-(x2+1))**2)
 
-    def cannon_attack_troops(self, king, troops):
+    def cannon_attack_barbarians(self, king, barbarians):
         '''
-        This function attacks the troops or the king
+        This function attacks the barbarians or the king
         '''
 
         for i in range(2):
@@ -167,15 +167,15 @@ class Cannon(Building):
             
             troop_dist = np.full((10),100)
             for j in range(10):
-                if troops.status[j] == 1:
-                    troop_dist[j] = troop_dist[j] = self.euclidean_distance(troops.y[j], troops.x[j], self.y[i], self.x[i])
+                if barbarians.status[j] == 1:
+                    troop_dist[j] = troop_dist[j] = self.euclidean_distance(barbarians.y[j], barbarians.x[j], self.y[i], self.x[i])
                 else:
                     troop_dist[j] = 1000
             
             if self.cannon_attack[i] == -1:
                 min_troop_dist = np.min(troop_dist)
                 if min_troop_dist < king_dist:
-                    if troops.status[np.argmin(troop_dist)] == 1:
+                    if barbarians.status[np.argmin(troop_dist)] == 1:
                         self.cannon_time[i] = 0
                         self.cannon_attacking[i] = 1
                         self.cannon_attack[i] = np.argmin(troop_dist)
@@ -222,15 +222,15 @@ class Cannon(Building):
                 for j in range(10):
 
                     if self.cannon_attack[i] == j:
-                        if troops.status[j] == 1:
-                            troop_dist[j] = self.euclidean_distance(troops.y[j],troops.x[j],self.y[i],self.x[i])
+                        if barbarians.status[j] == 1:
+                            troop_dist[j] = self.euclidean_distance(barbarians.y[j],barbarians.x[j],self.y[i],self.x[i])
                             if troop_dist[j] <= self.range:
                                     if math.floor(time.time() - self.cannon_time[i]) == self.cannon_ticks[i]:
                                         self.attack_status[i] = 1
                                         self.cannon_ticks[i] +=1
-                                        troops.health[j] -= self.damage
-                                        if troops.health[j] <= 0:
-                                            troops.status[j] = 2
+                                        barbarians.health[j] -= self.damage
+                                        if barbarians.health[j] <= 0:
+                                            barbarians.status[j] = 2
                                             self.cannon_attack[i] = -1
                                             self.cannon_attacking[i] = 0
                                             self.cannon_ticks[i] = 0
