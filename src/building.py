@@ -12,7 +12,6 @@ class Building():
         self.building_color_20  = Back.LIGHTRED_EX+' '+Style.RESET_ALL    
         self.building_color_dead = Back.LIGHTBLACK_EX+' '+Style.RESET_ALL              # color of the building when the health is in the range of 0 - 20%
 
-
 class Hut(Building):
 
     def __init__(self):
@@ -78,35 +77,57 @@ class Hut(Building):
 
 class Cannon(Building):
     
-    def __init__(self):
+    def __init__(self,level):
         Building.__init__(self)
         self.height = 2
         self.width = 3
-        self.health = np.full((2), 100)
-        self.y = np.zeros((2), type(int))
-        self.x = np.zeros((2), type(int))
+        self.health = np.full((5), 100)
+        self.y = np.zeros((5), type(int))
+        self.x = np.zeros((5), type(int))
+        self.level = level
         self.initialize_cannons()
         self.damage = 10
         self.range = 6
-        self.status = np.full((2), 1)
+        self.status = np.full((5), 1)
+        self.cannon_attack = [-1,-1,-1,-1,-1]
+        self.cannon_time = [time.time(),time.time(),time.time(),time.time(),time.time()]
+        self.cannon_attacking = [0,0,0,0,0]
+        self.cannon_ticks = [0,0,0,0,0]
 
-        self.cannon_attack = [-1,-1]
-        self.cannon_time = [time.time(),time.time()]
-        self.cannon_attacking = [0,0]
-        self.cannon_ticks = [0,0]
-
-        self.attack_status = np.full((2), 0)
+        self.attack_status = np.full((5), 0)
         self.attack_color = Back.BLACK+' '+Style.RESET_ALL
 
     def initialize_cannons(self):
         '''
-        This function initializes the huts
+        This function initializes the cannons
         '''
-        self.y[0] = 20
-        self.x[0] = 23
+        if(self.level == 1):
+            self.y[0] = 17
+            self.x[0] = 23
 
-        self.y[1] = 20
-        self.x[1] = 55
+            self.y[1] = 17
+            self.x[1] = 55
+        elif(self.level == 2):
+            self.y[0] = 17
+            self.x[0] = 23
+
+            self.y[1] = 17
+            self.x[1] = 55
+
+            self.y[2] = 25
+            self.x[2] = 39
+        elif(self.level == 3):
+            self.y[0] = 17
+            self.x[0] = 23
+
+            self.y[1] = 17
+            self.x[1] = 55
+
+            self.y[2] = 25
+            self.x[2] = 23
+
+            self.y[3] = 25
+            self.x[3] = 55
 
     def health_check(self, i):
         '''
@@ -125,7 +146,7 @@ class Cannon(Building):
         '''
         This function checks the coordinates of the cannons and returns if a cannon is present or not
         '''
-        for i in range(2):
+        for i in range(self.level+1):
             for j in range (self.height):
                 for k in range (self.width):
                     if self.y[i]+j == y and self.x[i]+k == x and self.health[i] > 0:
@@ -151,7 +172,7 @@ class Cannon(Building):
         This function attacks the barbarians or the hero
         '''
 
-        for i in range(2):
+        for i in range(self.level+1):
             if self.health[i] <= 0:
                 continue
             self.attack_status[i] = 0
@@ -278,6 +299,66 @@ class Cannon(Building):
                     else:
                         continue
 
+class WizardTower(Building):
+
+    def __init__(self,level):
+        Building.__init__(self)
+        self.height = 3
+        self.width = 3
+        self.health = np.full((5), 100)
+        self.y = np.zeros((5), type(int))
+        self.x = np.zeros((5), type(int))
+        self.level = level
+        self.initialize_wizard_tower()
+        self.damage = 10
+        self.range = 6
+        self.status = np.full((5), 1)
+    
+    def initialize_wizard_tower(self):
+        '''
+        This function initializes the wizard towers
+        '''
+        if(self.level == 1):
+            self.y[0] = 25
+            self.x[0] = 23
+
+            self.y[1] = 25
+            self.x[1] = 55
+        elif(self.level == 2):
+            self.y[0] = 25
+            self.x[0] = 23
+
+            self.y[1] = 25
+            self.x[1] = 55
+
+            self.y[2] = 16
+            self.x[2] = 39
+        elif(self.level == 3):
+            self.y[0] = 16
+            self.x[0] = 39
+
+            self.y[1] = 25
+            self.x[1] = 39
+
+            self.y[2] = 20
+            self.x[2] = 31
+
+            self.y[3] = 20
+            self.x[3] = 47
+
+    def health_check(self, i):
+        '''
+        This function checks the health of the hut and returns the color of the building
+        '''
+        if self.health[i] <= 0:
+            return self.building_color_dead
+        elif self.health[i] <= ((20/100)*100):
+            return self.building_color_20
+        elif self.health[i] <= ((50/100)*100):
+            return self.building_color_50
+        else:
+            return self.building_color_100
+
 class TownHall(Building):
 
     def __init__(self):
@@ -286,7 +367,7 @@ class TownHall(Building):
         self.width = 3
         self.health = np.full((1), 150)
         self.x = 39
-        self.y = 19
+        self.y = 20
         self.status = 1
 
         

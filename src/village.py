@@ -4,7 +4,7 @@ from src.king import King
 from src.queen import Queen
 from src.troops import Archers, Barbarians, Loons
 from src.spell import Heal, Rage
-from src.building import Hut, Cannon, TownHall
+from src.building import Hut, Cannon, TownHall, WizardTower
 from src.walls import Walls
 import numpy as np
 import math
@@ -13,7 +13,9 @@ import os
 
 class Village():
 
-    def __init__(self):
+    def __init__(self,level):
+        self.level = level
+
         self.rows = 39
         self.cols = 78
 
@@ -42,8 +44,9 @@ class Village():
 
         self.th = TownHall()
         self.huts = Hut()
-        self.cannons = Cannon()
+        self.cannons = Cannon(level)
         self.walls = Walls()
+        self.wizard_tower = WizardTower(level)
 
         self.start_time = time.time()
         self.current_time = time.time()
@@ -359,7 +362,7 @@ class Village():
         self.cannons.cannon_attack_troops(self.hero, self.king, self.queen, self.barbarians)
                     
         # render Cannons
-        for i in range(2):
+        for i in range(self.level + 1):
             for row in range(self.cannons.y[i],self.cannons.y[i]+self.cannons.height):
                 for col in range(self.cannons.x[i],self.cannons.x[i]+self.cannons.width):
                     if self.cannons.attack_status[i] == 1:
@@ -371,6 +374,13 @@ class Village():
                     else:
                         self.village[row][col] = self.cannons.health_check(i)
         
+        # render Wizard Towers
+        for i in range(self.level + 1):
+            for row in range(self.wizard_tower.y[i],self.wizard_tower.y[i]+self.wizard_tower.height):
+                for col in range(self.wizard_tower.x[i],self.wizard_tower.x[i]+self.wizard_tower.width):
+                    self.village[row][col] = self.wizard_tower.health_check(i)
+
+
         # render Spells
         spells = "----Spells----"
         spells_len = len(spells)

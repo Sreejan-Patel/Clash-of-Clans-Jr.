@@ -546,8 +546,8 @@ class Archers():
 class Loons():
 
     def __init__(self,start,end):
-        self.loons_color = Back.CYAN+' '+Style.RESET_ALL
-        self.loons_color_low_health = Back.LIGHTCYAN_EX+' '+Style.RESET_ALL
+        self.loons_color = Back.YELLOW+' '+Style.RESET_ALL
+        self.loons_color_low_health = Back.LIGHTYELLOW_EX+' '+Style.RESET_ALL
         self.x = np.zeros((3), type(int))
         self.y = np.zeros((3), type(int))
         self.status = np.zeros((3), type(int))
