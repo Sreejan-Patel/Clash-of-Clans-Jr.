@@ -169,7 +169,7 @@ class Cannon(Building):
 
     def cannon_attack_troops(self, hero, king, queen, barbarians):
         '''
-        This function attacks the barbarians or the hero
+        This function attacks the troops of the enemy
         '''
 
         for i in range(self.level+1):
@@ -312,7 +312,15 @@ class WizardTower(Building):
         self.initialize_wizard_tower()
         self.damage = 10
         self.range = 6
+        self.aoe = 3
         self.status = np.full((5), 1)
+        self.wizard_attack = [-1,-1,-1,-1,-1]
+        self.wizard_time = [time.time(),time.time(),time.time(),time.time(),time.time()]
+        self.wizard_attacking = [0,0,0,0,0]
+        self.wizard_ticks = [0,0,0,0,0]
+
+        self.attack_status = np.full((5), 0)
+        self.attack_color = Back.BLACK+' '+Style.RESET_ALL
     
     def initialize_wizard_tower(self):
         '''
@@ -358,6 +366,204 @@ class WizardTower(Building):
             return self.building_color_50
         else:
             return self.building_color_100
+    def check_coordinates(self, y, x):
+        '''
+        This function checks the coordinates of the wizard towers and returns if a wizard tower is present or not
+        '''
+        for i in range(self.level+1):
+            for j in range (self.height):
+                for k in range (self.width):
+                    if self.y[i]+j == y and self.x[i]+k == x and self.health[i] > 0:
+                        return i
+        return -1
+
+    def health_decrease(self, i, damage):
+        '''
+        This function decreases the health of the cannon by damage
+        '''
+        self.health[i] -= damage
+        if self.health[i] <= 0:
+            self.status[i] = 0
+
+    def euclidean_distance(self, y1, x1, y2, x2):
+        '''
+        This function calculates the euclidean distance between two points (considering the middle y and x coordinates of the wizard tower)
+        '''
+        return math.sqrt((y1-(y2+1))**2 + (x1-(x2+1))**2)
+
+    def euclidean_distance_attack(self, y1, x1, y2, x2):
+        '''
+        This function calculates the euclidean distance between two points (considering the middle y and x coordinates of the wizard tower)
+        '''
+        return math.sqrt((y1-(y2))**2 + (x1-(x2))**2)    
+
+    def wizard_attack_troops(self, hero, king, queen, barbarians):
+        '''
+        This function attacks the troops of the enemy
+        '''
+
+        for i in range(self.level+1):
+            if self.health[i] <= 0:
+                continue
+            self.attack_status[i] = 0
+            if self.wizard_attacking[i] == 1:
+                self.wizard_time[i] = time.time()
+                self.wizard_attacking[i] = 2
+            
+            hero_dist = 0
+            if hero == 1:
+                hero_dist = self.euclidean_distance(king.y, king.x, self.y[i], self.x[i])
+            elif hero == 2:
+                hero_dist = self.euclidean_distance(queen.y, queen.x, self.y[i], self.x[i])
+            else:
+                hero_dist = 1000
+            
+            troop_dist = np.full((10),100)
+            for j in range(10):
+                if barbarians.status[j] == 1:
+                    troop_dist[j] = troop_dist[j] = self.euclidean_distance(barbarians.y[j], barbarians.x[j], self.y[i], self.x[i])
+                else:
+                    troop_dist[j] = 1000
+            
+            if self.wizard_attack[i] == -1:
+                min_troop_dist = np.min(troop_dist)
+                if min_troop_dist < hero_dist:
+                    if barbarians.status[np.argmin(troop_dist)] == 1:
+                        self.wizard_time[i] = 0
+                        self.wizard_attacking[i] = 1
+                        self.wizard_attack[i] = np.argmin(troop_dist)
+                        self.wizard_ticks[i] = 0
+                    else:
+                        self.wizard_time[i] = 0
+                        self.wizard_attacking[i] = 0
+                        self.wizard_attack[i] = -1
+                        self.wizard_ticks[i] = 0
+                else:
+                    if hero == 1:
+                        if king.status == 1:
+                            self.wizard_time[i] = 0
+                            self.wizard_attacking[i] = 1
+                            self.wizard_attack[i] = 69
+                            self.wizard_ticks[i] = 0
+                        else:
+                            self.wizard_time[i] = 0
+                            self.wizard_attacking[i] = 0
+                            self.wizard_attack[i] = -1
+                            self.wizard_ticks[i] = 0
+                    elif hero == 2:
+                        if queen.status == 1:
+                            self.wizard_time[i] = 0
+                            self.wizard_attacking[i] = 1
+                            self.wizard_attack[i] = 69
+                            self.wizard_ticks[i] = 0
+                        else:
+                            self.wizard_time[i] = 0
+                            self.wizard_attacking[i] = 0
+                            self.wizard_attack[i] = -1
+                            self.wizard_ticks[i] = 0
+            
+            elif self.wizard_attack[i] == 69:
+                if hero == 1:
+                    if king.status == 1:
+                        king_dist = self.euclidean_distance(king.y,king.x,self.y[i],self.x[i])
+                        if king_dist <= self.range:
+                                if math.floor(time.time() - self.wizard_time[i]) == self.wizard_ticks[i]:
+                                    self.attack_status[i] = 1
+                                    self.wizard_ticks[i] += 1
+                                    king.king_health -= self.damage
+                                    euclidean_distances_barbarians = np.full((10),100)
+                                    for j in range(10):
+                                        euclidean_distances_barbarians[j] = self.euclidean_distance_attack(barbarians.y[j], barbarians.x[j], king.y, king.x)
+                                        if euclidean_distances_barbarians[j] <= self.aoe:
+                                            barbarians.health[j] -= self.damage
+
+                                    if king.king_health <= 0:
+                                        os.system('afplay sounds/king_die.wav -t 1 &')
+                                        king.status = 2
+                                        self.wizard_attack[i] = -1
+                                        self.wizard_attacking[i] = 0
+                                        self.wizard_ticks[i] = 0
+                                        self.wizard_time[i] = 0
+                        else:
+                            self.wizard_attack[i] = -1
+                            self.wizard_attacking[i] = 0
+                            self.wizard_ticks[i] = 0
+                            self.wizard_time[i] = 0
+                elif hero == 2:
+                    if queen.status == 1:
+                        queen_dist = self.euclidean_distance(queen.y,queen.x,self.y[i],self.x[i])
+                        if queen_dist <= self.range:
+                                if math.floor(time.time() - self.wizard_time[i]) == self.wizard_ticks[i]:
+                                    self.attack_status[i] = 1
+                                    self.wizard_ticks[i] += 1
+                                    queen.queen_health -= self.damage
+                                    euclidean_distances_barbarians = np.full((10),100)
+                                    for j in range(10):
+                                        euclidean_distances_barbarians[j] = self.euclidean_distance_attack(barbarians.y[j], barbarians.x[j], queen.y, queen.x)
+                                        if euclidean_distances_barbarians[j] <= self.aoe:
+                                            barbarians.health[j] -= self.damage
+                                    if queen.queen_health <= 0:
+                                        queen.status = 2
+                                        self.wizard_attack[i] = -1
+                                        self.wizard_attacking[i] = 0
+                                        self.wizard_ticks[i] = 0
+                                        self.wizard_time[i] = 0
+                        else:
+                            self.wizard_attack[i] = -1
+                            self.wizard_attacking[i] = 0
+                            self.wizard_ticks[i] = 0
+                            self.wizard_time[i] = 0
+
+            else:
+                for j in range(10):
+
+                    if self.wizard_attack[i] == j:
+                        if barbarians.status[j] == 1:
+                            troop_dist[j] = self.euclidean_distance(barbarians.y[j],barbarians.x[j],self.y[i],self.x[i])
+                            if troop_dist[j] <= self.range:
+                                    if math.floor(time.time() - self.wizard_time[i]) == self.wizard_ticks[i]:
+                                        self.attack_status[i] = 1
+                                        self.wizard_ticks[i] +=1
+                                        barbarians.health[j] -= self.damage
+                                        hero_distance = 1000
+                                        if hero == 1:
+                                            if king.status == 1:
+                                                hero_distance = self.euclidean_distance_attack(king.y,king.x,barbarians.y[j],barbarians.x[j])
+                                                if hero_distance <= self.aoe:
+                                                    king.king_health -= self.damage
+                                                    if king.king_health <= 0:
+                                                        os.system('afplay sounds/king_die.wav -t 1 &')
+                                                        king.status = 2
+                                                        self.wizard_attack[i] = -1
+                                                        self.wizard_attacking[i] = 0
+                                                        self.wizard_ticks[i] = 0
+                                                        self.wizard_time[i] = 0
+                                        elif hero == 2:
+                                            if queen.status == 1:
+                                                hero_distance = self.euclidean_distance_attack(queen.y,queen.x,barbarians.y[j],barbarians.x[j])
+                                                if hero_distance <= self.aoe:
+                                                    queen.queen_health -= self.damage
+                                                    if queen.queen_health <= 0:
+                                                        queen.status = 2
+                                                        self.wizard_attack[i] = -1
+                                                        self.wizard_attacking[i] = 0
+                                                        self.wizard_ticks[i] = 0
+                                                        self.wizard_time[i] = 0
+
+                                        if barbarians.health[j] <= 0:
+                                            barbarians.status[j] = 2
+                                            self.wizard_attack[i] = -1
+                                            self.wizard_attacking[i] = 0
+                                            self.wizard_ticks[i] = 0
+                                            self.wizard_time[i] = 0
+                            else:
+                                self.wizard_attack[i] = -1
+                                self.wizard_attacking[i] = 0
+                                self.wizard_ticks[i] = 0
+                                self.wizard_time[i] = 0
+                    else:
+                        continue
+    
 
 class TownHall(Building):
 

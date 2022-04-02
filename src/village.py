@@ -28,8 +28,8 @@ class Village():
         self.getch = Get()
 
         self.hero = 0
-        self.king = King(self.cols+self.troops_spells_cols - 11,7)
-        self.queen = Queen(self.cols+self.troops_spells_cols - 11,7)
+        self.king = King(self.cols+self.troops_spells_cols - 11,7,level)
+        self.queen = Queen(self.cols+self.troops_spells_cols - 11,7,level)
 
         self.barbarians = Barbarians(self.cols,self.cols+self.troops_spells_cols)
         self.archers = Archers(self.cols,self.cols+self.troops_spells_cols)
@@ -72,7 +72,7 @@ class Village():
                 self.hero = 2
         if(key == 'w' or 'a' or 's' or 'd'):
             if self.king.status == 1:
-                self.king.move(key, self.walls, self.huts, self.cannons, self.th, self.rage.status_rage)
+                self.king.move(key, self.walls, self.huts, self.cannons, self.wizard_tower, self.th, self.rage.status_rage)
             elif self.queen.status == 1:
                 if key == 'w':
                     self.queen.queen_dir = 1
@@ -82,31 +82,31 @@ class Village():
                     self.queen.queen_dir = 3
                 elif key == 'd':
                     self.queen.queen_dir = 4
-                self.queen.move(key, self.walls, self.huts, self.cannons, self.th, self.rage.status_rage)
+                self.queen.move(key, self.walls, self.huts, self.cannons, self.wizard_tower, self.th, self.rage.status_rage)
             else:
                 pass
         if(key == ' '):
             if self.king.status == 1:
-                self.king.attack(self.walls, self.huts, self.cannons, self.th)
+                self.king.attack(self.walls, self.huts, self.cannons, self.wizard_tower, self.th)
             elif self.queen.status == 1:
                 attack_y = 0
                 attack_x = 0
                 if self.queen.queen_dir == 1:
                     attack_y = self.queen.y - 8
                     attack_x = self.queen.x
-                    self.queen.attack(self.walls, self.huts, self.cannons, self.th, attack_y, attack_x)
+                    self.queen.attack(self.walls, self.huts, self.cannons, self.wizard_tower, self.th, attack_y, attack_x)
                 elif self.queen.queen_dir == 2:
                     attack_y = self.queen.y
                     attack_x = self.queen.x - 8
-                    self.queen.attack(self.walls, self.huts, self.cannons, self.th, attack_y, attack_x)
+                    self.queen.attack(self.walls, self.huts, self.cannons, self.wizard_tower, self.th, attack_y, attack_x)
                 elif self.queen.queen_dir == 3:
                     attack_y = self.queen.y + 8
                     attack_x = self.queen.x
-                    self.queen.attack(self.walls, self.huts, self.cannons, self.th, attack_y, attack_x)
+                    self.queen.attack(self.walls, self.huts, self.cannons, self.wizard_tower, self.th, attack_y, attack_x)
                 elif self.queen.queen_dir == 4:
                     attack_y = self.queen.y
                     attack_x = self.queen.x + 8 
-                    self.queen.attack(self.walls, self.huts, self.cannons, self.th, attack_y, attack_x)
+                    self.queen.attack(self.walls, self.huts, self.cannons, self.wizard_tower, self.th, attack_y, attack_x)
         
         
         if(key == 'i' or 'j' or 'k'):
@@ -133,7 +133,7 @@ class Village():
             self.heal.cast()
         if(key == 'l'):
             if self.king.status == 1:
-                self.king.attack_leviathan(self.walls, self.huts, self.cannons, self.th)
+                self.king.attack_leviathan(self.walls, self.huts, self.cannons, self.wizard_tower, self.th)
         if(key == 'e'):
             if self.queen.status == 1:
                 if self.queen.attack_eagle == 0:
@@ -373,12 +373,21 @@ class Village():
                             self.village[row][col] = self.cannons.building_color_dead
                     else:
                         self.village[row][col] = self.cannons.health_check(i)
-        
+
+        # wizard attack
+        self.wizard_tower.wizard_attack_troops(self.hero, self.king, self.queen, self.barbarians)
+
         # render Wizard Towers
         for i in range(self.level + 1):
             for row in range(self.wizard_tower.y[i],self.wizard_tower.y[i]+self.wizard_tower.height):
                 for col in range(self.wizard_tower.x[i],self.wizard_tower.x[i]+self.wizard_tower.width):
-                    self.village[row][col] = self.wizard_tower.health_check(i)
+                    if self.wizard_tower.attack_status[i] == 1:
+                        if self.wizard_tower.health[i] > 0:
+                            self.village[row][col] = self.wizard_tower.attack_color
+                        else:
+                            self.village[row][col] = self.wizard_tower.building_color_dead
+                    else:
+                        self.village[row][col] = self.wizard_tower.health_check(i)
 
 
         # render Spells
@@ -404,6 +413,9 @@ class Village():
             if self.king.status == 1:
                 self.king.king_attack_damage = self.king.king_attack_damage * 2
                 self.king.king_movement_speed = self.king.king_movement_speed * 2
+            if self.queen.status == 1:
+                self.queen.queen_attack_damage = self.queen.queen_attack_damage * 2
+                self.queen.queen_movement_speed = self.queen.queen_movement_speed * 2
             self.barbarians.damage = self.barbarians.damage * 2
             self.barbarians.time_to_move = 0.5
             os.system('afplay sounds/rage.wav -t 5 &')
@@ -414,6 +426,9 @@ class Village():
                 if self.king.status == 1 or self.king.king_movement_speed == 2:
                     self.king.king_attack_damage = self.king.king_attack_damage // 2
                     self.king.king_movement_speed = self.king.king_movement_speed // 2
+                if self.queen.status == 1 or self.queen.queen_movement_speed == 2:
+                    self.queen.queen_attack_damage = self.queen.queen_attack_damage // 2
+                    self.queen.queen_movement_speed = self.queen.queen_movement_speed // 2
                 self.barbarians.time_to_move = 1
                 self.barbarians.damage = self.barbarians.damage // 2
 
@@ -433,6 +448,8 @@ class Village():
             self.heal.heal_timer = time.time()
             if self.king.status == 1:
                 self.king.health_increase_heal()
+            if self.queen.status == 1:
+                self.queen.health_increase_heal()
             for counter in range(10):
                 if self.barbarians.status[counter] == 1:
                     self.barbarians.health_increase_heal(counter)
