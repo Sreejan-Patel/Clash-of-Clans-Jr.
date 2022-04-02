@@ -579,19 +579,19 @@ class Loons():
     def spawn(self, key):
         """Spawning Loons."""
         if self.count < 3:
-            if key == 'f':
+            if key == 'x':
                 self.x[self.count] = 7
                 self.y[self.count] = 14
                 self.status[self.count] = 1
                 self.timer[self.count] = time.time()
                 self.count += 1
-            elif key == 'g':
+            elif key == 'y':
                 self.x[self.count] = 7
                 self.y[self.count] = 28
                 self.status[self.count] = 1
                 self.timer[self.count] = time.time()
                 self.count += 1
-            elif key == 'h':
+            elif key == 'z':
                 self.x[self.count] = 32
                 self.y[self.count] = 12
                 self.status[self.count] = 1

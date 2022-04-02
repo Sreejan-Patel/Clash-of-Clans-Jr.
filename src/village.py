@@ -28,6 +28,7 @@ class Village():
         self.hero = 0
         self.king = King(self.cols+self.troops_spells_cols - 11,7)
         self.queen = Queen(self.cols+self.troops_spells_cols - 11,7)
+
         self.barbarians = Barbarians(self.cols,self.cols+self.troops_spells_cols)
         self.archers = Archers(self.cols,self.cols+self.troops_spells_cols)
         self.loons = Loons(self.cols,self.cols+self.troops_spells_cols)
@@ -70,6 +71,14 @@ class Village():
             if self.king.status == 1:
                 self.king.move(key, self.walls, self.huts, self.cannons, self.th, self.rage.status_rage)
             elif self.queen.status == 1:
+                if key == 'w':
+                    self.queen.queen_dir = 1
+                elif key == 'a':
+                    self.queen.queen_dir = 2
+                elif key == 's':
+                    self.queen.queen_dir = 3
+                elif key == 'd':
+                    self.queen.queen_dir = 4
                 self.queen.move(key, self.walls, self.huts, self.cannons, self.th, self.rage.status_rage)
             else:
                 pass
@@ -79,6 +88,28 @@ class Village():
                     self.king.attack(self.walls, self.huts, self.cannons, self.th)
                 else:
                     self.king.attack_leviathan(self.walls, self.huts, self.cannons, self.th)
+            elif self.queen.status == 1:
+                # if self.queen.attack_eagle == False:
+                attack_y = 0
+                attack_x = 0
+                if self.queen.queen_dir == 1:
+                    attack_y = self.queen.y - 8
+                    attack_x = self.queen.x
+                    self.queen.attack(self.walls, self.huts, self.cannons, self.th, attack_y, attack_x)
+                elif self.queen.queen_dir == 2:
+                    attack_y = self.queen.y
+                    attack_x = self.queen.x - 8
+                    self.queen.attack(self.walls, self.huts, self.cannons, self.th, attack_y, attack_x)
+                elif self.queen.queen_dir == 3:
+                    attack_y = self.queen.y + 8
+                    attack_x = self.queen.x
+                    self.queen.attack(self.walls, self.huts, self.cannons, self.th, attack_y, attack_x)
+                elif self.queen.queen_dir == 4:
+                    attack_y = self.queen.y
+                    attack_x = self.queen.x + 8 
+                    self.queen.attack(self.walls, self.huts, self.cannons, self.th, attack_y, attack_x)
+                # else:
+                #     self.queen.attack_eagle(self.walls, self.huts, self.cannons, self.th)
         if(key == 'i' or 'j' or 'k'):
             if self.barbarians.count < 10:
                 self.barbarians.spawn(key)

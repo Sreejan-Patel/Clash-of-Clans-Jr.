@@ -13,6 +13,7 @@ class Queen():
         self.x = x
         self.y = y
         self.queen_movement_speed = 1            # 1 blocks per command
+        self.queen_dir = 1
         
         self.status = 0                         # status = 0 => not spawned
                                                 # status = 1 => spawned
@@ -21,6 +22,11 @@ class Queen():
         self.queen_health = 100                  # health of the king
 
         self.queen_attack_damage = 15            # damage per each attack
+
+        self.queen_attack_range = 5              # range of the attack
+        self.queen_attack_dist = 8
+        
+        self.attack_eagle = False                # if the queen is with eagle artillery
 
     def move(self, key, walls, huts, cannons, th, rage):
         """Moving Queen."""
@@ -227,72 +233,41 @@ class Queen():
         '''
         return math.sqrt((y1-y2)**2 + (x1-x2)**2)
         
-    def attack(self, walls, huts, cannons, th):
+    def attack(self, walls, huts, cannons, th, attack_y, attack_x):
         """Attacking."""
-        self.king_color = Back.BLACK+' '+Style.RESET_ALL
+        self.queen_color = Back.BLACK+' '+Style.RESET_ALL
 
-        wall_l = walls.check_coordinates(self.y, self.x-1)
-        wall_r = walls.check_coordinates(self.y, self.x+1)
-        wall_u = walls.check_coordinates(self.y-1, self.x)
-        wall_d = walls.check_coordinates(self.y+1, self.x)
+        wall_euclidian_distance = np.full(114, np.inf)
+        for i in range(114):
+            wall_euclidian_distance[i] = self.euclidean_distance(attack_y, attack_x, walls.y[i], walls.x[i])
         
-        hut_l = huts.check_coordinates(self.y, self.x-1)
-        hut_r = huts.check_coordinates(self.y, self.x+1)
-        hut_u = huts.check_coordinates(self.y-1, self.x)
-        hut_d = huts.check_coordinates(self.y+1, self.x)
+        huts_euclidian_distance = np.full(5, np.inf)
+        for i in range(5):
+            huts_euclidian_distance[i] = self.euclidean_distance(attack_y, attack_x, huts.y[i], huts.x[i])
         
-        cannon_l = cannons.check_coordinates(self.y, self.x-1)
-        cannon_r = cannons.check_coordinates(self.y, self.x+1)
-        cannon_u = cannons.check_coordinates(self.y-1, self.x)
-        cannon_d = cannons.check_coordinates(self.y+1, self.x)
+        cannons_euclidian_distance = np.full(2, np.inf)
+        for i in range(2):
+            cannons_euclidian_distance[i] = self.euclidean_distance_cannons(attack_y, attack_x, cannons.y[i], cannons.x[i])
+
+        th_euclidian_distance = 1000
+        th_euclidian_distance = self.euclidean_distance_th(attack_y, attack_x, th.y, th.x)
+
+        for i in range(114):
+            if wall_euclidian_distance[i] <= self.queen_attack_range:
+                walls.health[i] = walls.health[i] - self.queen_attack_damage
         
-        th_l = th.check_coordinates(self.y, self.x-1)
-        th_r = th.check_coordinates(self.y, self.x+1)
-        th_u = th.check_coordinates(self.y-1, self.x)
-        th_d = th.check_coordinates(self.y+1, self.x)
+        for i in range(5):
+            if huts_euclidian_distance[i] <= self.queen_attack_range:
+                huts.health[i] = huts.health[i] - self.queen_attack_damage
+        
+        for i in range(2):
+            if cannons_euclidian_distance[i] <= self.queen_attack_range:
+                cannons.health[i] = cannons.health[i] - self.queen_attack_damage
+        
+        if th_euclidian_distance <= self.queen_attack_range:
+            th.health = th.health - self.queen_attack_damage
 
-        if wall_l != -1:
-            walls.health_decrease(wall_l, self.king_attack_damage)
-            os.system('afplay sounds/king_attack.wav &')
-        elif wall_r != -1:
-            walls.health_decrease(wall_r, self.king_attack_damage)
-            os.system('afplay sounds/king_attack.wav &')
-        elif wall_u != -1:
-            walls.health_decrease(wall_u, self.king_attack_damage)
-            os.system('afplay sounds/king_attack.wav &')
-        elif wall_d != -1:
-            walls.health_decrease(wall_d, self.king_attack_damage)
-            os.system('afplay sounds/king_attack.wav &')
-
-        elif hut_l != -1:
-            huts.health_decrease(hut_l, self.king_attack_damage)
-            os.system('afplay sounds/king_attack.wav &')
-        elif hut_r != -1:
-            huts.health_decrease(hut_r, self.king_attack_damage)
-            os.system('afplay sounds/king_attack.wav &')
-        elif hut_u != -1:
-            huts.health_decrease(hut_u, self.king_attack_damage)
-            os.system('afplay sounds/king_attack.wav &')
-        elif hut_d != -1:
-            huts.health_decrease(hut_d, self.king_attack_damage)
-            os.system('afplay sounds/king_attack.wav &')
-
-        elif cannon_l != -1:
-            cannons.health_decrease(cannon_l, self.king_attack_damage)
-            os.system('afplay sounds/king_attack.wav &')
-        elif cannon_r != -1:
-            cannons.health_decrease(cannon_r, self.king_attack_damage)
-            os.system('afplay sounds/king_attack.wav &')
-        elif cannon_u != -1:
-            cannons.health_decrease(cannon_u, self.king_attack_damage)
-            os.system('afplay sounds/king_attack.wav &')
-        elif cannon_d != -1:
-            cannons.health_decrease(cannon_d, self.king_attack_damage)
-            os.system('afplay sounds/king_attack.wav &')
-
-        elif th_l != -1 or th_r != -1 or th_u != -1 or th_d != -1:
-            th.health_decrease(self.king_attack_damage)
-            os.system('afplay sounds/king_attack.wav &')
+        
 
     
         

@@ -319,18 +319,19 @@ class King():
         for i in range(114):
             if wall_euclidian_distance[i] <= self.leviathan_range:
                 walls.health[i] = walls.health[i] - self.king_attack_damage
+                os.system('afplay sounds/king_attack.wav &')
         
         for i in range(5):
             if huts_euclidian_distance[i] <= self.leviathan_range:
                 huts.health[i] = huts.health[i] - self.king_attack_damage
-        
+                os.system('afplay sounds/king_attack.wav &')
         for i in range(2):
             if cannons_euclidian_distance[i] <= self.leviathan_range:
                 cannons.health[i] = cannons.health[i] - self.king_attack_damage
-        
+                os.system('afplay sounds/king_attack.wav &')
         if th_euclidian_distance <= self.leviathan_range:
             th.health = th.health - self.king_attack_damage
-        
+            os.system('afplay sounds/king_attack.wav &')
         
     def health_check(self):
         """Checking health."""
