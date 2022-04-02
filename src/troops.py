@@ -46,7 +46,7 @@ class Barbarians():
 
     def health_check(self, i):
         '''
-        This function checks the health of the hut and returns the color of the building
+        This function checks the health of the troop and returns the color of the troop
         '''
         if self.health[i] <= ((50/100)*30):
             return self.barbarians_color_low_health
@@ -533,6 +533,15 @@ class Archers():
             else:
                 pass
 
+    def health_check(self, i):
+        '''
+        This function checks the health of the troop and returns the color of the troop
+        '''
+        if self.health[i] <= ((50/100)*15):
+            return self.archers_color_low_health
+        else:
+            return self.archers_color
+
 
 class Loons():
 
@@ -591,6 +600,13 @@ class Loons():
             else:
                 pass
     
-
+    def health_check(self, i):
+        '''
+        This function checks the health of the troop and returns the color of the troop
+        '''
+        if self.health[i] <= ((50/100)*30):
+            return self.loons_color_low_health
+        else:
+            return self.loons_color
 
 

@@ -1,6 +1,7 @@
 from colorama import Fore, Style, Back
 from src.input import Get, input_to
 from src.king import King
+from src.queen import Queen
 from src.troops import Archers, Barbarians, Loons
 from src.spell import Heal, Rage
 from src.building import Hut, Cannon, TownHall
@@ -24,7 +25,9 @@ class Village():
         self.border_color = Back.BLACK+' '+Style.RESET_ALL
         self.getch = Get()
 
+        self.hero = 0
         self.king = King(self.cols+self.troops_spells_cols - 11,7)
+        self.queen = Queen(self.cols+self.troops_spells_cols - 11,7)
         self.barbarians = Barbarians(self.cols,self.cols+self.troops_spells_cols)
         self.archers = Archers(self.cols,self.cols+self.troops_spells_cols)
         self.loons = Loons(self.cols,self.cols+self.troops_spells_cols)
@@ -56,11 +59,18 @@ class Village():
         """Getting key from user."""
         key = input_to(self.getch)
         
-        if(key == 'b' and self.king.status == 0):
-            self.king.spawn()
+        if self.hero == 0:
+            if(key == 'b' and self.king.status == 0):
+                self.king.spawn()
+                self.hero = 1
+            if(key == 'q' and self.queen.status == 0):
+                self.queen.spawn()
+                self.hero = 2
         if(key == 'w' or 'a' or 's' or 'd'):
             if self.king.status == 1:
                 self.king.move(key, self.walls, self.huts, self.cannons, self.th, self.rage.status_rage)
+            elif self.queen.status == 1:
+                self.queen.move(key, self.walls, self.huts, self.cannons, self.th, self.rage.status_rage)
             else:
                 pass
         if(key == ' '):
@@ -79,7 +89,7 @@ class Village():
                 self.archers.spawn(key)
             else:
                 pass
-        if(key == 'f' or 'g' or 'h'):
+        if(key == 'x' or 'y' or 'z'):
             if self.loons.count < 3:
                 self.loons.spawn(key)
             else:
@@ -163,44 +173,92 @@ class Village():
         for i in range(troop_len):
             self.village[troop_y][troop_x+i] = Fore.YELLOW+troop[i]+Style.RESET_ALL
 
-        # render King
-        troop_king = "--King--"
-        troop_king_len = len(troop_king)
-        troop_king_x = (self.cols+self.troops_spells_cols - troop_king_len -7*length)
-        troop_king_y = 5
-        for i in range(troop_king_len):
-            self.village[troop_king_y][troop_king_x+i] = Fore.YELLOW+troop_king[i]+Style.RESET_ALL
+        if self.hero == 0:
+            hero = "--Hero--"
+            hero_len = len(hero)
+            hero_x = (self.cols+self.troops_spells_cols - hero_len - 7*length)
+            hero_y = 5
+            for i in range(hero_len):
+                self.village[hero_y][hero_x+i] = Fore.YELLOW+hero[i]+Style.RESET_ALL
 
-        king_health = "Health: "
-        king_health_len = len(king_health)
-        king_health_x = (self.cols+6)
-        king_health_y = 7
+        if self.king.status == 1:
+            # render King
+            troop_king = "--King--"
+            troop_king_len = len(troop_king)
+            troop_king_x = (self.cols+self.troops_spells_cols - troop_king_len -7*length)
+            troop_king_y = 5
+            for i in range(troop_king_len):
+                self.village[troop_king_y][troop_king_x+i] = Fore.YELLOW+troop_king[i]+Style.RESET_ALL
 
-        health_bar_len = 10
-        king_health_length = int(self.king.king_health * health_bar_len / 100)
+            king_health = "Health: "
+            king_health_len = len(king_health)
+            king_health_x = (self.cols+6)
+            king_health_y = 7
 
-        king_dead = "!!Dead!!"
-        king_dead_len = len(king_dead)
-        king_dead_x = (self.cols+self.troops_spells_cols - troop_king_len -7*length)
-        king_dead_y = 7
+            health_bar_len = 10
+            king_health_length = int(self.king.king_health * health_bar_len / 100)
+
+            king_dead = "!!Dead!!"
+            king_dead_len = len(king_dead)
+            king_dead_x = (self.cols+self.troops_spells_cols - troop_king_len -7*length)
+            king_dead_y = 7
 
 
-        if self.king.status == 0:
-            self.village[self.king.y][self.king.x] = self.king.king_color
-        elif self.king.status == 1:
-            self.village[self.king.y][self.king.x] = self.king.king_color
-            for i in range(king_health_len):
-                self.village[king_health_y][king_health_x+i] = king_health[i]
-            for i in range(health_bar_len):
-                self.village[king_health_y][king_health_x+i+king_health_len] = Back.BLACK+' '+Style.RESET_ALL
-            for i in range(king_health_length):
-                self.village[king_health_y][king_health_x+i+king_health_len] = Back.RED+' '+Style.RESET_ALL
-        elif self.king.status == 2:
-            for i in range(king_dead_len):
-                self.village[king_dead_y][king_dead_x+i] = Fore.RED+king_dead[i]+Style.RESET_ALL
+            if self.king.status == 0:
+                self.village[self.king.y][self.king.x] = self.king.king_color
+            elif self.king.status == 1:
+                self.village[self.king.y][self.king.x] = self.king.king_color
+                for i in range(king_health_len):
+                    self.village[king_health_y][king_health_x+i] = king_health[i]
+                for i in range(health_bar_len):
+                    self.village[king_health_y][king_health_x+i+king_health_len] = Back.BLACK+' '+Style.RESET_ALL
+                for i in range(king_health_length):
+                    self.village[king_health_y][king_health_x+i+king_health_len] = Back.RED+' '+Style.RESET_ALL
+            elif self.king.status == 2:
+                for i in range(king_dead_len):
+                    self.village[king_dead_y][king_dead_x+i] = Fore.RED+king_dead[i]+Style.RESET_ALL
+            
+
+            self.king.king_color = Back.RED+' '+Style.RESET_ALL
         
+        if self.queen.status == 1:
+            # render Queen
+            troop_queen = "--Queen--"
+            troop_queen_len = len(troop_queen)
+            troop_queen_x = (self.cols+self.troops_spells_cols - troop_queen_len -7*length)
+            troop_queen_y = 5
+            for i in range(troop_queen_len):
+                self.village[troop_queen_y][troop_queen_x+i] = Fore.YELLOW+troop_queen[i]+Style.RESET_ALL
 
-        self.king.king_color = Back.RED+' '+Style.RESET_ALL
+            queen_health = "Health: "
+            queen_health_len = len(queen_health)
+            queen_health_x = (self.cols+6)
+            queen_health_y = 7
+
+            health_bar_len = 10
+            queen_health_length = int(self.queen.queen_health * health_bar_len / 100)
+
+            queen_dead = "!!Dead!!"
+            queen_dead_len = len(queen_dead)
+            queen_dead_x = (self.cols+self.troops_spells_cols - troop_queen_len -7*length)
+            queen_dead_y = 7
+
+
+            if self.queen.status == 0:
+                self.village[self.queen.y][self.queen.x] = self.queen.queen_color
+            elif self.queen.status == 1:
+                self.village[self.queen.y][self.queen.x] = self.queen.queen_color
+                for i in range(queen_health_len):
+                    self.village[queen_health_y][queen_health_x+i] = queen_health[i]
+                for i in range(health_bar_len):
+                    self.village[queen_health_y][queen_health_x+i+queen_health_len] = Back.BLACK+' '+Style.RESET_ALL
+                for i in range(queen_health_length):
+                    self.village[queen_health_y][queen_health_x+i+queen_health_len] = Back.RED+' '+Style.RESET_ALL
+            elif self.queen.status == 2:
+                for i in range(queen_dead_len):
+                    self.village[queen_dead_y][queen_dead_x+i] = Fore.RED+queen_dead[i]+Style.RESET_ALL
+            
+            self.queen.queen_color = Back.RED+' '+Style.RESET_ALL
 
         # Barbarians Attack
         self.barbarians.move(self.walls, self.huts, self.cannons, self.th)
@@ -208,7 +266,7 @@ class Village():
         # render Barbarians
         troop_barb = "--Barb--"
         troop_barb_len = len(troop_barb)
-        troop_barb_x = (self.cols+self.troops_spells_cols - troop_king_len -7*length)
+        troop_barb_x = (self.cols+self.troops_spells_cols - troop_barb_len -7*length)
         troop_barb_y = 9
         for i in range(troop_barb_len):
 
@@ -228,7 +286,7 @@ class Village():
         # render Archers
         troop_archer = "--Archer--"
         troop_archer_len = len(troop_archer)
-        troop_archer_x = (self.cols+self.troops_spells_cols - troop_king_len -8*length)
+        troop_archer_x = (self.cols+self.troops_spells_cols - troop_barb_len -8*length)
         troop_archer_y = 13
         for i in range(troop_archer_len):
             self.village[troop_archer_y][troop_archer_x+i] = Fore.YELLOW+troop_archer[i]+Style.RESET_ALL
@@ -245,7 +303,7 @@ class Village():
         # render Loons
         troop_loon = "--Loon--"
         troop_loon_len = len(troop_loon)
-        troop_loon_x = (self.cols+self.troops_spells_cols - troop_king_len -7*length)
+        troop_loon_x = (self.cols+self.troops_spells_cols - troop_loon_len -7*length)
         troop_loon_y = 17
         for i in range(troop_loon_len):
             self.village[troop_loon_y][troop_loon_x+i] = Fore.YELLOW+troop_loon[i]+Style.RESET_ALL

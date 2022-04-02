@@ -4,7 +4,7 @@ village = Village()
 
 while(True):
     key = village.get_key()
-    if key == 'q':
+    if key == 'c':
         break
     elif village.game_result == 0:
         village.render()
