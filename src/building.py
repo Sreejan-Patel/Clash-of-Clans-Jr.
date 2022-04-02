@@ -146,9 +146,9 @@ class Cannon(Building):
         '''
         return math.sqrt((y1-(y2+1))**2 + (x1-(x2+1))**2)
 
-    def cannon_attack_barbarians(self, king, barbarians):
+    def cannon_attack_troops(self, hero, king, queen, barbarians):
         '''
-        This function attacks the barbarians or the king
+        This function attacks the barbarians or the hero
         '''
 
         for i in range(2):
@@ -159,11 +159,13 @@ class Cannon(Building):
                 self.cannon_time[i] = time.time()
                 self.cannon_attacking[i] = 2
             
-            king_dist = 0
-            if king.status == 1:
-                king_dist = self.euclidean_distance(king.y, king.x, self.y[i], self.x[i])
+            hero_dist = 0
+            if hero == 1:
+                hero_dist = self.euclidean_distance(king.y, king.x, self.y[i], self.x[i])
+            elif hero == 2:
+                hero_dist = self.euclidean_distance(queen.y, queen.x, self.y[i], self.x[i])
             else:
-                king_dist = 1000
+                hero_dist = 1000
             
             troop_dist = np.full((10),100)
             for j in range(10):
@@ -174,7 +176,7 @@ class Cannon(Building):
             
             if self.cannon_attack[i] == -1:
                 min_troop_dist = np.min(troop_dist)
-                if min_troop_dist < king_dist:
+                if min_troop_dist < hero_dist:
                     if barbarians.status[np.argmin(troop_dist)] == 1:
                         self.cannon_time[i] = 0
                         self.cannon_attacking[i] = 1
@@ -186,37 +188,70 @@ class Cannon(Building):
                         self.cannon_attack[i] = -1
                         self.cannon_ticks[i] = 0
                 else:
-                    if king.status == 1:
-                        self.cannon_time[i] = 0
-                        self.cannon_attacking[i] = 1
-                        self.cannon_attack[i] = 69
-                        self.cannon_ticks[i] = 0
-                    else:
-                        self.cannon_time[i] = 0
-                        self.cannon_attacking[i] = 0
-                        self.cannon_attack[i] = -1
-                        self.cannon_ticks[i] = 0
+                    if hero == 1:
+                        if king.status == 1:
+                            self.cannon_time[i] = 0
+                            self.cannon_attacking[i] = 1
+                            self.cannon_attack[i] = 69
+                            self.cannon_ticks[i] = 0
+                        else:
+                            self.cannon_time[i] = 0
+                            self.cannon_attacking[i] = 0
+                            self.cannon_attack[i] = -1
+                            self.cannon_ticks[i] = 0
+                    elif hero == 2:
+                        if queen.status == 1:
+                            self.cannon_time[i] = 0
+                            self.cannon_attacking[i] = 1
+                            self.cannon_attack[i] = 69
+                            self.cannon_ticks[i] = 0
+                        else:
+                            self.cannon_time[i] = 0
+                            self.cannon_attacking[i] = 0
+                            self.cannon_attack[i] = -1
+                            self.cannon_ticks[i] = 0
             
             elif self.cannon_attack[i] == 69:
-                if king.status == 1:
-                    king_dist = self.euclidean_distance(king.y,king.x,self.y[i],self.x[i])
-                    if king_dist <= self.range:
-                            if math.floor(time.time() - self.cannon_time[i]) == self.cannon_ticks[i]:
-                                self.attack_status[i] = 1
-                                self.cannon_ticks[i] += 1
-                                king.king_health -= self.damage
-                                if king.king_health <= 0:
-                                    os.system('afplay sounds/king_die.wav -t 1 &')
-                                    king.status = 2
-                                    self.cannon_attack[i] = -1
-                                    self.cannon_attacking[i] = 0
-                                    self.cannon_ticks[i] = 0
-                                    self.cannon_time[i] = 0
-                    else:
-                        self.cannon_attack[i] = -1
-                        self.cannon_attacking[i] = 0
-                        self.cannon_ticks[i] = 0
-                        self.cannon_time[i] = 0
+                if hero == 1:
+                    if king.status == 1:
+                        king_dist = self.euclidean_distance(king.y,king.x,self.y[i],self.x[i])
+                        if king_dist <= self.range:
+                                if math.floor(time.time() - self.cannon_time[i]) == self.cannon_ticks[i]:
+                                    self.attack_status[i] = 1
+                                    self.cannon_ticks[i] += 1
+                                    king.king_health -= self.damage
+                                    if king.king_health <= 0:
+                                        os.system('afplay sounds/king_die.wav -t 1 &')
+                                        king.status = 2
+                                        self.cannon_attack[i] = -1
+                                        self.cannon_attacking[i] = 0
+                                        self.cannon_ticks[i] = 0
+                                        self.cannon_time[i] = 0
+                        else:
+                            self.cannon_attack[i] = -1
+                            self.cannon_attacking[i] = 0
+                            self.cannon_ticks[i] = 0
+                            self.cannon_time[i] = 0
+                elif hero == 2:
+                    if queen.status == 1:
+                        queen_dist = self.euclidean_distance(queen.y,queen.x,self.y[i],self.x[i])
+                        if queen_dist <= self.range:
+                                if math.floor(time.time() - self.cannon_time[i]) == self.cannon_ticks[i]:
+                                    self.attack_status[i] = 1
+                                    self.cannon_ticks[i] += 1
+                                    queen.queen_health -= self.damage
+                                    if queen.queen_health <= 0:
+                                        os.system('afplay sounds/queen_die.wav -t 1 &')
+                                        queen.status = 2
+                                        self.cannon_attack[i] = -1
+                                        self.cannon_attacking[i] = 0
+                                        self.cannon_ticks[i] = 0
+                                        self.cannon_time[i] = 0
+                        else:
+                            self.cannon_attack[i] = -1
+                            self.cannon_attacking[i] = 0
+                            self.cannon_ticks[i] = 0
+                            self.cannon_time[i] = 0
 
             else:
                 for j in range(10):

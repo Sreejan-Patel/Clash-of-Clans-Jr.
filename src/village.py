@@ -84,12 +84,8 @@ class Village():
                 pass
         if(key == ' '):
             if self.king.status == 1:
-                if self.king.leviathan == False:
-                    self.king.attack(self.walls, self.huts, self.cannons, self.th)
-                else:
-                    self.king.attack_leviathan(self.walls, self.huts, self.cannons, self.th)
+                self.king.attack(self.walls, self.huts, self.cannons, self.th)
             elif self.queen.status == 1:
-                # if self.queen.attack_eagle == False:
                 attack_y = 0
                 attack_x = 0
                 if self.queen.queen_dir == 1:
@@ -108,8 +104,8 @@ class Village():
                     attack_y = self.queen.y
                     attack_x = self.queen.x + 8 
                     self.queen.attack(self.walls, self.huts, self.cannons, self.th, attack_y, attack_x)
-                # else:
-                #     self.queen.attack_eagle(self.walls, self.huts, self.cannons, self.th)
+        
+        
         if(key == 'i' or 'j' or 'k'):
             if self.barbarians.count < 10:
                 self.barbarians.spawn(key)
@@ -134,7 +130,16 @@ class Village():
             self.heal.cast()
         if(key == 'l'):
             if self.king.status == 1:
-                self.king.leviathan = True
+                self.king.attack_leviathan(self.walls, self.huts, self.cannons, self.th)
+        if(key == 'e'):
+            if self.queen.status == 1:
+                if self.queen.attack_eagle == 0:
+                    self.queen.attack_eagle = 1
+                    self.queen.eagle_timer = time.time()
+                    self.queen.eagle_attack_x = self.queen.x
+                    self.queen.eagle_attack_y = self.queen.y
+
+                
         return key
 
     def initialize_replay(self):
@@ -351,7 +356,7 @@ class Village():
 
 
         # Cannon attack
-        self.cannons.cannon_attack_barbarians(self.king, self.barbarians)
+        self.cannons.cannon_attack_troops(self.hero, self.king, self.queen, self.barbarians)
                     
         # render Cannons
         for i in range(2):
@@ -472,6 +477,32 @@ class Village():
                 self.heal_time = math.floor(self.current_time - self.heal.heal_timer)
             if self.rage.status_rage == 2:
                 self.rage_time = math.floor(self.current_time - self.rage.rage_timer)
+            if self.queen.attack_eagle == 1:
+                if self.current_time - self.queen.eagle_timer >= 1:
+                    attack_y = 0
+                    attack_x = 0
+                    if self.queen.queen_dir == 1:
+                        attack_y = self.queen.eagle_attack_y - 16
+                        attack_x = self.queen.eagle_attack_x
+                        self.queen.attack(self.walls, self.huts, self.cannons, self.th, attack_y, attack_x)
+                    elif self.queen.queen_dir == 2:
+                        attack_y = self.queen.eagle_attack_y
+                        attack_x = self.queen.eagle_attack_x - 16
+                        self.queen.attack(self.walls, self.huts, self.cannons, self.th, attack_y, attack_x)
+                    elif self.queen.queen_dir == 3:
+                        attack_y = self.queen.eagle_attack_y + 16
+                        attack_x = self.queen.eagle_attack_x
+                        self.queen.attack(self.walls, self.huts, self.cannons, self.th, attack_y, attack_x)
+                    elif self.queen.queen_dir == 4:
+                        attack_y = self.queen.eagle_attack_y
+                        attack_x = self.queen.eagle_attack_x + 16 
+                        self.queen.attack(self.walls, self.huts, self.cannons, self.th, attack_y, attack_x)
+                    self.queen.attack_eagle = 0
+                    self.queen.eagle_timer = 0
+                    self.queen.eagle_attack_x = 0
+                    self.queen.eagle_attack_y = 0
+
+                    
         elif self.game_result == 1:
             game_over_screen_height = 16
             game_over_screen_width = 43

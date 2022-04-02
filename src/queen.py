@@ -24,9 +24,12 @@ class Queen():
         self.queen_attack_damage = 15            # damage per each attack
 
         self.queen_attack_range = 5              # range of the attack
-        self.queen_attack_dist = 8
+        self.queen_eagle_attack_range = 9       # range of the eagle attack
         
         self.attack_eagle = False                # if the queen is with eagle artillery
+        self.eagle_timer = 0
+        self.eagle_attack_x = 0
+        self.eagle_attack_y = 0
 
     def move(self, key, walls, huts, cannons, th, rage):
         """Moving Queen."""
@@ -252,20 +255,36 @@ class Queen():
         th_euclidian_distance = 1000
         th_euclidian_distance = self.euclidean_distance_th(attack_y, attack_x, th.y, th.x)
 
-        for i in range(114):
-            if wall_euclidian_distance[i] <= self.queen_attack_range:
-                walls.health[i] = walls.health[i] - self.queen_attack_damage
-        
-        for i in range(5):
-            if huts_euclidian_distance[i] <= self.queen_attack_range:
-                huts.health[i] = huts.health[i] - self.queen_attack_damage
-        
-        for i in range(2):
-            if cannons_euclidian_distance[i] <= self.queen_attack_range:
-                cannons.health[i] = cannons.health[i] - self.queen_attack_damage
-        
-        if th_euclidian_distance <= self.queen_attack_range:
-            th.health = th.health - self.queen_attack_damage
+        if self.attack_eagle == 0:
+            for i in range(114):
+                if wall_euclidian_distance[i] <= self.queen_attack_range:
+                    walls.health[i] = walls.health[i] - self.queen_attack_damage
+            
+            for i in range(5):
+                if huts_euclidian_distance[i] <= self.queen_attack_range:
+                    huts.health[i] = huts.health[i] - self.queen_attack_damage
+            
+            for i in range(2):
+                if cannons_euclidian_distance[i] <= self.queen_attack_range:
+                    cannons.health[i] = cannons.health[i] - self.queen_attack_damage
+            
+            if th_euclidian_distance <= self.queen_attack_range:
+                th.health = th.health - self.queen_attack_damage
+        else:
+            for i in range(114):
+                if wall_euclidian_distance[i] <= self.queen_eagle_attack_range:
+                    walls.health[i] = walls.health[i] - self.queen_attack_damage
+            
+            for i in range(5):
+                if huts_euclidian_distance[i] <= self.queen_eagle_attack_range:
+                    huts.health[i] = huts.health[i] - self.queen_attack_damage
+            
+            for i in range(2):
+                if cannons_euclidian_distance[i] <= self.queen_eagle_attack_range:
+                    cannons.health[i] = cannons.health[i] - self.queen_attack_damage
+            
+            if th_euclidian_distance <= self.queen_eagle_attack_range:
+                th.health = th.health - self.queen_attack_damage
 
         
 
