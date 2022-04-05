@@ -31,9 +31,9 @@ class Village():
         self.king = King(self.cols+self.troops_spells_cols - 11,7,level)
         self.queen = Queen(self.cols+self.troops_spells_cols - 11,7,level)
 
-        self.barbarians = Barbarians(self.cols,self.cols+self.troops_spells_cols)
-        self.archers = Archers(self.cols,self.cols+self.troops_spells_cols)
-        self.loons = Loons(self.cols,self.cols+self.troops_spells_cols)
+        self.barbarians = Barbarians(self.cols,self.cols+self.troops_spells_cols,level)
+        self.archers = Archers(self.cols,self.cols+self.troops_spells_cols,level)
+        self.loons = Loons(self.cols,self.cols+self.troops_spells_cols,level)
 
         self.rage = Rage(self.cols+self.troops_spells_cols - 11,25)
         self.rage_time = 0
@@ -300,7 +300,7 @@ class Village():
             self.queen.queen_color = Back.RED+' '+Style.RESET_ALL
 
         # Barbarians Attack
-        self.barbarians.move(self.walls, self.huts, self.cannons, self.th)
+        self.barbarians.move(self.walls, self.huts, self.cannons, self.th, self.wizard_tower)
 
         # render Barbarians
         troop_barb = "--Barb--"
@@ -321,6 +321,9 @@ class Village():
                     self.village[self.barbarians.y[counter]][self.barbarians.x[counter]] = self.barbarians.health_check(counter)
                 elif self.barbarians.attack_status[counter] == 1:
                     self.village[self.barbarians.y[counter]][self.barbarians.x[counter]] = self.barbarians.attack_color
+
+        # # Archers attack
+        # self.archers.move(self.walls, self.huts, self.cannons, self.th)
 
         # render Archers
         troop_archer = "--Archer--"

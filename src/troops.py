@@ -7,7 +7,7 @@ from src.utlis import Utils
 
 class Barbarians():
 
-    def __init__(self,start,end):
+    def __init__(self,start,end,level):
         self.barbarians_color = Back.BLUE+' '+Style.RESET_ALL
         self.barbarians_color_low_health = Back.LIGHTBLUE_EX+' '+Style.RESET_ALL
         self.x = np.zeros((10), type(int))
@@ -27,6 +27,8 @@ class Barbarians():
         self.move_y = np.full((10), -1)
 
         self.entered = np.zeros((10), type(int))
+
+        self.level = level
 
         self.initialize(start,end)
 
@@ -97,7 +99,7 @@ class Barbarians():
         '''
         return math.sqrt((y1-y2)**2 + (x1-x2)**2)
 
-    def check_obstacle(self,i,walls,huts,cannons,th,prev_y,prev_x):
+    def check_obstacle(self,i,walls,huts,cannons,wizard,th,prev_y,prev_x):
         if walls.check_coordinates(self.y[i], self.x[i]) > -1:
             self.y[i] = prev_y
             self.x[i] = prev_x
@@ -114,22 +116,26 @@ class Barbarians():
             self.y[i] = prev_y
             self.x[i] = prev_x
             return 4
-        elif Utils.check_border_coordinates(self.y[i], self.x[i]):
+        elif wizard.check_coordinates(self.y[i], self.x[i]) > -1:
             self.y[i] = prev_y
             self.x[i] = prev_x
             return 5
+        elif Utils.check_border_coordinates(self.y[i], self.x[i]):
+            self.y[i] = prev_y
+            self.x[i] = prev_x
+            return 6
         else:
             return 0
     
     
-    def move_barbarians(self,i,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp):
+    def move_barbarians(self,i,walls,huts,cannons,wizard,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp):
             movement = [w,s,a,d,ne,nw,se,sw]
             movement.sort()
 
             for j in range(len(movement)):
                 if movement[j] == w:
                     self.y[i] -= self.movement_speed
-                    check = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
+                    check = self.check_obstacle(i,walls,huts,cannons,wizard,th,prev_y,prev_x)
                     if check == 1 and temp == 1:
                         self.attack_wall(i,walls)
                         break
@@ -139,7 +145,7 @@ class Barbarians():
                         break
                 elif movement[j] == s:
                     self.y[i] += self.movement_speed
-                    check = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
+                    check = self.check_obstacle(i,walls,huts,cannons,wizard,th,prev_y,prev_x)
                     if check == 1 and temp == 1:
                         self.attack_wall(i,walls)
                         break
@@ -149,7 +155,7 @@ class Barbarians():
                         break
                 elif movement[j] == a:
                     self.x[i] -= self.movement_speed
-                    check = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
+                    check = self.check_obstacle(i,walls,huts,cannons,wizard,th,prev_y,prev_x)
                     if check == 1 and temp == 1:
                         self.attack_wall(i,walls)
                         break
@@ -159,7 +165,7 @@ class Barbarians():
                         break
                 elif movement[j] == d:
                     self.x[i] += self.movement_speed
-                    check = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
+                    check = self.check_obstacle(i,walls,huts,cannons,wizard,th,prev_y,prev_x)
                     if check == 1 and temp == 1:
                         self.attack_wall(i,walls)
                         break
@@ -170,7 +176,7 @@ class Barbarians():
                 elif movement[j] == ne:
                     self.y[i] -= self.movement_speed
                     self.x[i] += self.movement_speed
-                    check = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
+                    check = self.check_obstacle(i,walls,huts,cannons,wizard,th,prev_y,prev_x)
                     if check == 1 and temp == 1:
                         self.attack_wall(i,walls)
                         break
@@ -181,7 +187,7 @@ class Barbarians():
                 elif movement[j] == nw:
                     self.y[i] -= self.movement_speed
                     self.x[i] -= self.movement_speed
-                    check = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
+                    check = self.check_obstacle(i,walls,huts,cannons,wizard,th,prev_y,prev_x)
                     if check == 1 and temp == 1:
                         self.attack_wall(i,walls)
                         break
@@ -192,7 +198,7 @@ class Barbarians():
                 elif movement[j] == se:
                     self.y[i] += self.movement_speed
                     self.x[i] += self.movement_speed
-                    check = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
+                    check = self.check_obstacle(i,walls,huts,cannons,wizard,th,prev_y,prev_x)
                     if check == 1 and temp == 1:
                         self.attack_wall(i,walls)
                         break
@@ -203,7 +209,7 @@ class Barbarians():
                 elif movement[j] == sw:
                     self.y[i] += self.movement_speed
                     self.x[i] -= self.movement_speed
-                    check = self.check_obstacle(i,walls,huts,cannons,th,prev_y,prev_x)
+                    check = self.check_obstacle(i,walls,huts,cannons,wizard,th,prev_y,prev_x)
                     if check == 1 and temp == 1:
                         self.attack_wall(i,walls)
                         break
@@ -214,7 +220,7 @@ class Barbarians():
                 else:
                     pass
 
-    def nearest_building(self,i,huts,cannons,th):
+    def nearest_building(self,i,huts,cannons,th,wizard):
         at_least_one = 0
         huts_dist = np.full((5), 100)
         for j in range(5):
@@ -227,25 +233,36 @@ class Barbarians():
             at_least_one = 1
             th_dist = self.euclidean_distance_th(self.y[i],self.x[i],th.y,th.x)
                     
-        cannons_dist = np.full((2), 100)
-        for j in range(2):
+        cannons_dist = np.full((self.level+1), 100)
+        for j in range(self.level+1):
             if cannons.status[j] == 1:
                 at_least_one = 1
                 cannons_dist[j] = self.euclidean_distance_cannons(self.y[i],self.x[i],cannons.y[j],cannons.x[j])
+
+        wizard_dist = np.full((self.level+1), 100)
+        for j in range(self.level+1):
+            if wizard.status[j] == 1:
+                at_least_one = 1
+                wizard_dist[j] = self.euclidean_distance_cannons(self.y[i],self.x[i],wizard.y[j],wizard.x[j])
+        
+        
         if at_least_one == 1:
-            if np.amin(huts_dist) < np.amin(cannons_dist) and np.amin(huts_dist) < th_dist:
+            if np.amin(huts_dist) < np.amin(cannons_dist) and np.amin(huts_dist) < th_dist and np.amin(huts_dist) < np.amin(wizard_dist):   
                 self.move_x[i] = huts.x[np.argmin(huts_dist)]
                 self.move_y[i] = huts.y[np.argmin(huts_dist)]
-            elif np.amin(cannons_dist) < th_dist:
+            elif np.amin(cannons_dist) < th_dist and np.amin(cannons_dist) < np.amin(wizard_dist):
                 self.move_x[i] = cannons.x[np.argmin(cannons_dist)]
                 self.move_y[i] = cannons.y[np.argmin(cannons_dist)]
+            elif np.amin(wizard_dist) < th_dist:
+                self.move_x[i] = wizard.x[np.argmin(wizard_dist)]
+                self.move_y[i] = wizard.y[np.argmin(wizard_dist)]
             else:
                 self.move_x[i] = th.x
                 self.move_y[i] = th.y 
         else:
             pass    
         
-    def move(self,walls,huts,cannons,th):
+    def move(self,walls,huts,cannons,th,wizard):
         """Moving barbarians."""
         for i in range(10):
             self.attack_status[i] = 0
@@ -263,8 +280,8 @@ class Barbarians():
                                 is_protected = False
                     elif self.entered[i] == 1:
                         temp = 0
-                        self.nearest_building(i,huts,cannons,th)
-                        self.move_towards_nearest_building(i,walls,huts,cannons,th,temp)
+                        self.nearest_building(i,huts,cannons,th,wizard)
+                        self.move_towards_nearest_building(i,walls,huts,cannons,th,wizard,temp)
                             
 
                     walls_dist = np.full((114), 100)
@@ -274,8 +291,8 @@ class Barbarians():
                     # if no wall is broken, move towards the nearest building
                     if is_protected == True:
                         temp = 1
-                        self.nearest_building(i,huts,cannons,th)
-                        self.move_towards_nearest_building(i,walls,huts,cannons,th,temp)
+                        self.nearest_building(i,huts,cannons,th,wizard)
+                        self.move_towards_nearest_building(i,walls,huts,cannons,th,wizard,temp)
                     elif is_protected == False and self.entered[i] == 0:
                         wall_dist_min = 100
                         for j in range(114):
@@ -284,9 +301,9 @@ class Barbarians():
                                     wall_dist_min = walls_dist[j]
                                     self.move_x[i] = walls.x[j]
                                     self.move_y[i] = walls.y[j]
-                        self.move_towards_wall_open(i,self.move_y[i],self.move_x[i],walls,huts,cannons,th)
+                        self.move_towards_wall_open(i,self.move_y[i],self.move_x[i],walls,huts,cannons,wizard,th)
 
-    def move_towards_wall_open(self,i,y,x,walls,huts,cannons,th):
+    def move_towards_wall_open(self,i,y,x,walls,huts,cannons,wizard,th):
         """Move Towards Wall Open"""
         if self.y[i] == y  and self.x[i] == x and self.health[i] > 0:
             self.entered[i] = 1
@@ -305,15 +322,15 @@ class Barbarians():
             prev_x = self.x[i]
             prev_y = self.y[i]
             temp = 0
-            self.move_barbarians(i,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp)
+            self.move_barbarians(i,walls,huts,cannons,wizard,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp)
     
-    def move_towards_nearest_building(self,i,walls,huts,cannons,th,temp):
+    def move_towards_nearest_building(self,i,walls,huts,cannons,th,wizard,temp):
         """Move Towards Nearest Building"""
         if ((self.y[i] == self.move_y[i]+1 and self.x[i] == self.move_x[i]) or (self.y[i] == self.move_y[i]-1 and self.x[i] == self.move_x[i])
         or (self.y[i] == self.move_y[i] and self.x[i] == self.move_x[i]+1) or (self.y[i] == self.move_y[i] and self.x[i] == self.move_x[i]-1)
         or (self.y[i] == self.move_y[i]+1 and self.x[i] == self.move_x[i]+1) or (self.y[i] == self.move_y[i]-1 and self.x[i] == self.move_x[i]-1)
         or (self.y[i] == self.move_y[i]-1 and self.x[i] == self.move_x[i]+1) or (self.y[i] == self.move_y[i]+1 and self.x[i] == self.move_x[i]-1)) and self.health[i] > 0:
-            self.attack(i,huts,cannons,th)
+            self.attack(i,huts,cannons,wizard,th)
         else:
             w = self.euclidean_distance(self.y[i]-1,self.x[i],self.move_y[i],self.move_x[i])
             s = self.euclidean_distance(self.y[i]+1,self.x[i],self.move_y[i],self.move_x[i])
@@ -327,9 +344,9 @@ class Barbarians():
 
             prev_x = self.x[i]
             prev_y = self.y[i]
-            self.move_barbarians(i,walls,huts,cannons,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp)
+            self.move_barbarians(i,walls,huts,cannons,wizard,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp)
 
-    def attack(self,i,huts,cannons,th):
+    def attack(self,i,huts,cannons,wizard,th):
         """Attacking."""
         
         hut_l = huts.check_coordinates(self.y[i], self.x[i]-1)
@@ -358,6 +375,16 @@ class Barbarians():
         th_nw = th.check_coordinates(self.y[i]-1, self.x[i]-1)
         th_se = th.check_coordinates(self.y[i]+1, self.x[i]+1)
         th_sw = th.check_coordinates(self.y[i]+1, self.x[i]-1)
+
+        wizard_l = wizard.check_coordinates(self.y[i], self.x[i]-1)
+        wizard_r = wizard.check_coordinates(self.y[i], self.x[i]+1)
+        wizard_u = wizard.check_coordinates(self.y[i]-1, self.x[i])
+        wizard_d = wizard.check_coordinates(self.y[i]+1, self.x[i])
+        wizard_ne = wizard.check_coordinates(self.y[i]-1, self.x[i]+1)
+        wizard_nw = wizard.check_coordinates(self.y[i]-1, self.x[i]-1)
+        wizard_se = wizard.check_coordinates(self.y[i]+1, self.x[i]+1)
+        wizard_sw = wizard.check_coordinates(self.y[i]+1, self.x[i]-1)
+
 
 
         if hut_l != -1:
@@ -426,6 +453,39 @@ class Barbarians():
             self.attack_status[i] = 1
             os.system('afplay sounds/barb_attack.wav &')
 
+        elif wizard_l != -1:
+            wizard.health_decrease(wizard_l, self.damage)
+            self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
+        elif wizard_r != -1:
+            wizard.health_decrease(wizard_r, self.damage)
+            self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
+        elif wizard_u != -1:
+            wizard.health_decrease(wizard_u, self.damage)
+            self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
+        elif wizard_d != -1:
+            wizard.health_decrease(wizard_d, self.damage)
+            self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
+        elif wizard_ne != -1:
+            wizard.health_decrease(wizard_ne, self.damage)
+            self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
+        elif wizard_nw != -1:
+            wizard.health_decrease(wizard_nw, self.damage)
+            self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
+        elif wizard_se != -1:
+            wizard.health_decrease(wizard_se, self.damage)
+            self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
+        elif wizard_sw != -1:
+            wizard.health_decrease(wizard_sw, self.damage)
+            self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
+
         elif th_l != -1 or th_r != -1 or th_u != -1 or th_d != -1 or th_ne != -1 or th_nw != -1 or th_se != -1 or th_sw != -1:
             th.health_decrease(self.damage)  
             self.attack_status[i] = 1 
@@ -478,7 +538,7 @@ class Barbarians():
         
 class Archers():
 
-    def __init__(self,start,end):
+    def __init__(self,start,end,level):
         self.archers_color = Back.CYAN+' '+Style.RESET_ALL
         self.archers_color_low_health = Back.LIGHTCYAN_EX+' '+Style.RESET_ALL
         self.x = np.zeros((5), type(int))
@@ -498,6 +558,8 @@ class Archers():
         self.move_y = np.full((5), -1)
 
         self.entered = np.zeros((5), type(int))
+
+        self.level = level  
 
         self.initialize(start,end)
 
@@ -545,7 +607,7 @@ class Archers():
 
 class Loons():
 
-    def __init__(self,start,end):
+    def __init__(self,start,end,level):
         self.loons_color = Back.YELLOW+' '+Style.RESET_ALL
         self.loons_color_low_health = Back.LIGHTYELLOW_EX+' '+Style.RESET_ALL
         self.x = np.zeros((3), type(int))
@@ -565,6 +627,8 @@ class Loons():
         self.move_y = np.full((3), -1)
 
         self.entered = np.zeros((3), type(int))
+
+        self.level = level
 
         self.initialize(start,end)
 
