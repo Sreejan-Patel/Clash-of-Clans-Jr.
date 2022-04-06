@@ -525,6 +525,14 @@ class WizardTower(Building):
                                         self.attack_status[i] = 1
                                         self.wizard_ticks[i] +=1
                                         barbarians.health[j] -= self.damage
+                                        euclidean_distances_barbarians = np.full((10),100)
+                                        for k in range(10):
+                                            if k != j:
+                                                euclidean_distances_barbarians[k] = self.euclidean_distance_attack(barbarians.y[k], barbarians.x[k], barbarians.y[j], barbarians.x[j])
+                                                if euclidean_distances_barbarians[k] <= self.aoe:
+                                                    barbarians.health[k] -= self.damage
+                                            else:
+                                                pass
                                         hero_distance = 1000
                                         if hero == 1:
                                             if king.status == 1:
