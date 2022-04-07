@@ -561,7 +561,7 @@ class Archers():
 
         self.attack_status = np.zeros((5), type(int))
         self.attack_color = Back.BLACK+' '+Style.RESET_ALL
-        self.attack_range = 7
+        self.attack_range = 5
 
         self.move_x = np.full((5), -1)
         self.move_y = np.full((5), -1)
@@ -1024,23 +1024,23 @@ class Loons():
     def __init__(self,start,end,level):
         self.loons_color = Back.YELLOW+' '+Style.RESET_ALL
         self.loons_color_low_health = Back.LIGHTYELLOW_EX+' '+Style.RESET_ALL
-        self.x = np.zeros((3), type(int))
-        self.y = np.zeros((3), type(int))
-        self.status = np.zeros((3), type(int))
-        self.health = np.full((3), 30)
+        self.x = np.zeros((2), type(int))
+        self.y = np.zeros((2), type(int))
+        self.status = np.zeros((2), type(int))
+        self.health = np.full((2), 30)
         self.count = 0
         self.damage = 20
         self.movement_speed = 1
-        self.timer = np.full((3), 0)
+        self.timer = np.full((2), 0)
         self.time_to_move = 1
 
-        self.attack_status = np.zeros((3), type(int))
+        self.attack_status = np.zeros((2), type(int))
         self.attack_color = Back.BLACK+' '+Style.RESET_ALL
 
-        self.move_x = np.full((3), -1)
-        self.move_y = np.full((3), -1)
+        self.move_x = np.full((2), -1)
+        self.move_y = np.full((2), -1)
 
-        self.entered = np.zeros((3), type(int))
+        self.entered = np.zeros((2), type(int))
 
         self.level = level
 
@@ -1049,14 +1049,14 @@ class Loons():
     def initialize(self,start,end):
         """Initializing Loons."""
         length = 3
-        for i in range(3):
+        for i in range(2):
             if self.status[i] == 0:
-                self.x[i] = start + i*length + 3*length + 2
+                self.x[i] = start + i*length + 3*length + 4
                 self.y[i] = 19
 
     def spawn(self, key):
         """Spawning Loons."""
-        if self.count < 3:
+        if self.count < 2:
             if key == 'x':
                 self.x[self.count] = 7
                 self.y[self.count] = 14
@@ -1087,4 +1087,255 @@ class Loons():
         else:
             return self.loons_color
 
+    def euclidean_distance_th(self, y1, x1, y2, x2):
+        '''
+        This function calculates the euclidean distance between two points (considering the middle y and x coordinates of the th)
+        '''
+        return math.sqrt((y1-(y2+1))**2 + (x1-(x2+1))**2)
 
+    def euclidean_distance_cannons(self, y1, x1, y2, x2):
+        '''
+        This function calculates the euclidean distance between two points (considering the middle y and x coordinates of the cannons)
+        '''
+        return math.sqrt((y1-(y2+1))**2 + (x1-(x2+1))**2)
+    
+    def euclidean_distance(self, y1, x1, y2, x2):
+        '''
+        This function calculates the euclidean distance between two points 
+        '''
+        return math.sqrt((y1-y2)**2 + (x1-x2)**2)
+
+    def check_obstacle(self,i,huts,cannons,wizard,th,prev_y,prev_x):
+        if huts.check_coordinates(self.y[i], self.x[i]) > -1:
+            self.y[i] = prev_y
+            self.x[i] = prev_x
+            return 2
+        elif cannons.check_coordinates(self.y[i], self.x[i]) > -1:
+            self.y[i] = prev_y
+            self.x[i] = prev_x
+            return 3
+        elif th.check_coordinates(self.y[i], self.x[i]) > -1:
+            self.y[i] = prev_y
+            self.x[i] = prev_x
+            return 4
+        elif wizard.check_coordinates(self.y[i], self.x[i]) > -1:
+            self.y[i] = prev_y
+            self.x[i] = prev_x
+            return 5
+        elif Utils.check_border_coordinates(self.y[i], self.x[i]):
+            self.y[i] = prev_y
+            self.x[i] = prev_x
+            return 6
+        else:
+            return 0
+
+    def move_loons(self,i,huts,cannons,wizard,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw):
+            movement = [w,s,a,d,ne,nw,se,sw]
+            movement.sort()
+
+            for j in range(len(movement)):
+                if movement[j] == w:
+                    self.y[i] -= self.movement_speed
+                    if self.y[i] == self.move_y[i] and self.x[i] == self.move_x[i]:
+                        return
+                    else:
+                        check = self.check_obstacle(i,huts,cannons,wizard,th,prev_y,prev_x)
+                        if check > 0:
+                            continue
+                        else:
+                            break
+                elif movement[j] == s:
+                    self.y[i] += self.movement_speed
+                    if self.y[i] == self.move_y[i] and self.x[i] == self.move_x[i]:
+                        return
+                    else:
+                        check = self.check_obstacle(i,huts,cannons,wizard,th,prev_y,prev_x)
+                        if check > 0:
+                            continue
+                        else:
+                            break
+                elif movement[j] == a:
+                    self.x[i] -= self.movement_speed
+                    if self.y[i] == self.move_y[i] and self.x[i] == self.move_x[i]:
+                        return
+                    else:
+                        check = self.check_obstacle(i,huts,cannons,wizard,th,prev_y,prev_x)
+                        if check > 0:
+                            continue
+                        else:
+                            break
+                elif movement[j] == d:
+                    self.x[i] += self.movement_speed
+                    if self.y[i] == self.move_y[i] and self.x[i] == self.move_x[i]:
+                        return
+                    else:
+                        check = self.check_obstacle(i,huts,cannons,wizard,th,prev_y,prev_x)
+                        if check > 0:
+                            continue
+                        else:
+                            break
+                elif movement[j] == ne:
+                    self.y[i] -= self.movement_speed
+                    self.x[i] += self.movement_speed
+                    if self.y[i] == self.move_y[i] and self.x[i] == self.move_x[i]:
+                        return
+                    else:
+                        check = self.check_obstacle(i,huts,cannons,wizard,th,prev_y,prev_x)
+                        if check > 0:
+                            continue
+                        else:
+                            break
+                elif movement[j] == nw:
+                    self.y[i] -= self.movement_speed
+                    self.x[i] -= self.movement_speed
+                    if self.y[i] == self.move_y[i] and self.x[i] == self.move_x[i]:
+                        return
+                    else:
+                        check = self.check_obstacle(i,huts,cannons,wizard,th,prev_y,prev_x)
+                        if check > 0:
+                            continue
+                        else:
+                            break
+                elif movement[j] == se:
+                    self.y[i] += self.movement_speed
+                    self.x[i] += self.movement_speed
+                    if self.y[i] == self.move_y[i] and self.x[i] == self.move_x[i]:
+                        return
+                    else:
+                        check = self.check_obstacle(i,huts,cannons,wizard,th,prev_y,prev_x)
+                        if check > 0:
+                            continue
+                        else:
+                            break
+                elif movement[j] == sw:
+                    self.y[i] += self.movement_speed
+                    self.x[i] -= self.movement_speed
+                    if self.y[i] == self.move_y[i] and self.x[i] == self.move_x[i]:
+                        return
+                    else:
+                        check = self.check_obstacle(i,huts,cannons,wizard,th,prev_y,prev_x)
+                        if check > 0:
+                            continue
+                        else:
+                            break
+                else:
+                    pass
+
+    def move_defense(self, i, cannons, wizard):
+        at_least_one = 0
+        cannon_dist = np.full(self.level+1, 1000)
+        for j in range(self.level+1):
+            if cannons.status[j] == 1:
+                at_least_one = 1
+                cannon_dist[j] = self.euclidean_distance_cannons(self.y[i], self.x[i], cannons.y[j], cannons.x[j])
+            else:
+                cannon_dist[j] = 1000
+        
+        wizard_dist = np.full(self.level+1, 1000)
+        for j in range(self.level+1):
+            if wizard.status[j] == 1:
+                at_least_one = 1
+                wizard_dist[j] = self.euclidean_distance_cannons(self.y[i], self.x[i], wizard.y[j], wizard.x[j])
+            else:
+                wizard_dist[j] = 1000
+
+        if at_least_one == 1:
+            if np.amin(cannon_dist) < np.amin(wizard_dist):
+                self.move_x[i] = cannons.x[np.argmin(cannon_dist)]
+                self.move_y[i] = cannons.y[np.argmin(cannon_dist)]
+            else:
+                self.move_x[i] = wizard.x[np.argmin(wizard_dist)]
+                self.move_y[i] = wizard.y[np.argmin(wizard_dist)]
+        else:
+            pass
+
+    def attack(self,i,huts,cannons,th,wizard):
+
+        hut_attack = huts.check_coordinates(self.y[i],self.x[i])
+        cannon_attack = cannons.check_coordinates(self.y[i],self.x[i])
+        wizard_attack = wizard.check_coordinates(self.y[i],self.x[i])
+        th_attack = th.check_coordinates(self.y[i],self.x[i])
+        
+        if hut_attack != -1:
+            huts.health_decrease(hut_attack,self.damage)
+            self.attack_status[i] = 1
+        elif cannon_attack != -1:
+            cannons.health_decrease(cannon_attack,self.damage)
+            self.attack_status[i] = 1
+        elif th_attack != -1:
+            th.health_decrease(self.damage)
+            self.attack_status[i] = 1
+        elif wizard_attack != -1:
+            wizard.health_decrease(wizard_attack,self.damage)
+            self.attack_status[i] = 1
+        else:
+            pass
+
+    def nearest_building(self,i,huts,th):
+        at_least_one = 0
+        hut_dist = np.full(5, 1000)
+        for j in range(5):
+            if huts.status[j] == 1:
+                at_least_one = 1
+                hut_dist[j] = self.euclidean_distance(self.y[i], self.x[i], huts.y[j], huts.x[j])
+
+        th_dist = 1000
+        for j in range(1):
+            if th.status == 1:
+                at_least_one = 1
+                th_dist = self.euclidean_distance_th(self.y[i], self.x[i], th.y, th.x)
+        
+        if at_least_one == 1:
+            if np.amin(hut_dist) < th_dist:
+                self.move_x[i] = huts.x[np.argmin(hut_dist)]
+                self.move_y[i] = huts.y[np.argmin(hut_dist)]
+            else:
+                self.move_x[i] = th.x
+                self.move_y[i] = th.y
+        else:
+            pass
+
+    def move(self,huts,cannons,wizard,th):
+        """Moving."""
+        for i in range(2):
+            self.attack_status[i] = 0
+        for i in range(2):
+            if self.status[i] == 1:
+                if time.time() - self.timer[i] >= self.time_to_move:
+                    self.timer[i] = time.time()
+                    defenses = 0
+                    for j in range(self.level+1):
+                        if cannons.status[j] == 1:
+                            defenses += 1
+                    
+                    for j in range(self.level+1):
+                        if wizard.status[j] == 1:
+                            defenses += 1
+
+                    if defenses != 0:
+                        self.move_defense(i,cannons,wizard)
+                        self.move_towards_nearest_building(i,huts,cannons,th,wizard)
+                    else:
+                        self.nearest_building(i,huts,th)
+                        self.move_towards_nearest_building(i,huts,cannons,th,wizard)
+                    
+
+    def move_towards_nearest_building(self,i,huts,cannons,th,wizard):
+        """Move Towards Nearest Building"""
+        if self.y[i] == self.move_y[i] and self.x[i] == self.move_x[i]:
+            self.attack(i,huts,cannons,th,wizard)
+        else:
+            w = self.euclidean_distance(self.y[i]-1,self.x[i],self.move_y[i],self.move_x[i])
+            s = self.euclidean_distance(self.y[i]+1,self.x[i],self.move_y[i],self.move_x[i])
+            a = self.euclidean_distance(self.y[i],self.x[i]-1,self.move_y[i],self.move_x[i])
+            d = self.euclidean_distance(self.y[i],self.x[i]+1,self.move_y[i],self.move_x[i])
+            ne = self.euclidean_distance(self.y[i]-1,self.x[i]+1,self.move_y[i],self.move_x[i])
+            nw = self.euclidean_distance(self.y[i]-1,self.x[i]-1,self.move_y[i],self.move_x[i])
+            se = self.euclidean_distance(self.y[i]+1,self.x[i]+1,self.move_y[i],self.move_x[i])
+            sw = self.euclidean_distance(self.y[i]+1,self.x[i]-1,self.move_y[i],self.move_x[i])
+                
+
+            prev_x = self.x[i]
+            prev_y = self.y[i]
+            self.move_loons(i,huts,cannons,wizard,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw)  
+                

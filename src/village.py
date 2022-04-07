@@ -220,7 +220,7 @@ class Village():
             for i in range(hero_len):
                 self.village[hero_y][hero_x+i] = Fore.YELLOW+hero[i]+Style.RESET_ALL
 
-        if self.king.status == 1:
+        if self.hero == 1:
             # render King
             troop_king = "--King--"
             troop_king_len = len(troop_king)
@@ -260,7 +260,7 @@ class Village():
 
             self.king.king_color = Back.RED+' '+Style.RESET_ALL
         
-        if self.queen.status == 1:
+        if self.hero == 2:
             # render Queen
             troop_queen = "--Queen--"
             troop_queen_len = len(troop_queen)
@@ -341,25 +341,6 @@ class Village():
                     self.village[self.archers.y[counter]][self.archers.x[counter]] = self.archers.health_check(counter)
                 elif self.archers.attack_status[counter] == 1:
                     self.village[self.archers.y[counter]][self.archers.x[counter]] = self.archers.attack_color
-        
-        # render Loons
-        troop_loon = "--Loon--"
-        troop_loon_len = len(troop_loon)
-        troop_loon_x = (self.cols+self.troops_spells_cols - troop_loon_len -7*length)
-        troop_loon_y = 17
-        for i in range(troop_loon_len):
-            self.village[troop_loon_y][troop_loon_x+i] = Fore.YELLOW+troop_loon[i]+Style.RESET_ALL
-
-        for counter in range(3):
-            if self.loons.status[counter] == 0:
-                self.village[self.loons.y[counter]][self.loons.x[counter]] = self.loons.loons_color
-            if self.loons.status[counter] == 1:
-                if self.loons.attack_status[counter] == 0:
-                    self.village[self.loons.y[counter]][self.loons.x[counter]] = self.loons.health_check(counter)
-                elif self.loons.attack_status[counter] == 1:
-                    self.village[self.loons.y[counter]][self.loons.x[counter]] = self.loons.attack_color
-
-
 
         # Cannon attack
         self.cannons.cannon_attack_troops(self.hero, self.king, self.queen, self.barbarians)
@@ -391,6 +372,26 @@ class Village():
                             self.village[row][col] = self.wizard_tower.building_color_dead
                     else:
                         self.village[row][col] = self.wizard_tower.health_check(i)
+
+        # Loons attack
+        self.loons.move(self.huts, self.cannons, self.wizard_tower, self.th)
+
+        # render Loons
+        troop_loon = "--Loon--"
+        troop_loon_len = len(troop_loon)
+        troop_loon_x = (self.cols+self.troops_spells_cols - troop_loon_len -7*length)
+        troop_loon_y = 17
+        for i in range(troop_loon_len):
+            self.village[troop_loon_y][troop_loon_x+i] = Fore.YELLOW+troop_loon[i]+Style.RESET_ALL
+
+        for counter in range(2):
+            if self.loons.status[counter] == 0:
+                self.village[self.loons.y[counter]][self.loons.x[counter]] = self.loons.loons_color
+            if self.loons.status[counter] == 1:
+                if self.loons.attack_status[counter] == 0:
+                    self.village[self.loons.y[counter]][self.loons.x[counter]] = self.loons.health_check(counter)
+                elif self.loons.attack_status[counter] == 1:
+                    self.village[self.loons.y[counter]][self.loons.x[counter]] = self.loons.attack_color
 
 
         # render Spells
@@ -492,7 +493,7 @@ class Village():
         for counter in range(5):
             if self.huts.health[counter] <= 0:
                 check_victory += 1
-        if self.th.health <= 0:
+        if self.th.health[0] <= 0:
             check_victory += 1
 
         if check_loss == 11 and check_victory < 8:

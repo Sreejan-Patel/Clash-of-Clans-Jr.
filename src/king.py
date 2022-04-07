@@ -381,7 +381,7 @@ class King():
                 wizard.health[i] = wizard.health[i] - self.king_attack_damage
                 os.system('afplay sounds/king_attack.wav &')
         if th_euclidian_distance <= self.leviathan_range:
-            th.health = th.health - self.king_attack_damage
+            th.health[0] = th.health[0] - self.king_attack_damage
             os.system('afplay sounds/king_attack.wav &')
         
     def health_check(self):

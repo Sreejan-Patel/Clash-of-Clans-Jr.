@@ -305,7 +305,7 @@ class Queen():
                     wizard.health[i] = wizard.health[i] - self.queen_attack_damage
             
             if th_euclidian_distance <= self.queen_attack_range:
-                th.health = th.health - self.queen_attack_damage
+                th.health[0] = th.health[0] - self.queen_attack_damage
         else:
             for i in range(114):
                 if wall_euclidian_distance[i] <= self.queen_eagle_attack_range:
@@ -324,7 +324,7 @@ class Queen():
                     wizard.health[i] = wizard.health[i] - self.queen_attack_damage
 
             if th_euclidian_distance <= self.queen_eagle_attack_range:
-                th.health = th.health - self.queen_attack_damage
+                th.health[0] = th.health[0] - self.queen_attack_damage
 
         
 

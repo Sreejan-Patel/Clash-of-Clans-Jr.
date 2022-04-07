@@ -604,7 +604,7 @@ class TownHall(Building):
         '''
         for i in range (self.height):
             for j in range (self.width):
-                if self.y+i == y and self.x+j == x and self.health > 0:
+                if self.y+i == y and self.x+j == x and self.health[0] > 0:
                     return 1
 
         return -1
@@ -613,6 +613,6 @@ class TownHall(Building):
         '''
         This function decreases the health of the TownHall by damage
         '''
-        self.health -= damage
-        if self.health <= 0:
+        self.health[0] -= damage
+        if self.health[0] <= 0:
             self.status = 0
