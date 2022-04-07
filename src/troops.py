@@ -18,7 +18,7 @@ class Barbarians():
         self.damage = 10
         self.movement_speed = 1
         self.timer = np.full((10), 0)
-        self.time_to_move = 1
+        self.time_to_move = 2
 
         self.attack_status = np.zeros((10), type(int))
         self.attack_color = Back.BLACK+' '+Style.RESET_ALL
@@ -557,7 +557,7 @@ class Archers():
         self.damage = 5
         self.movement_speed = 1
         self.timer = np.full((5), 0)
-        self.time_to_move = 0.5
+        self.time_to_move = 1
 
         self.attack_status = np.zeros((5), type(int))
         self.attack_color = Back.BLACK+' '+Style.RESET_ALL
@@ -821,7 +821,6 @@ class Archers():
                         temp = 0
                         self.nearest_building(i,huts,cannons,th,wizard)
                         in_range = self.euclidean_distance(self.y[i],self.x[i],self.move_y[i],self.move_x[i])
-                        print(in_range)
                         if in_range <= self.attack_range:
                             self.attack_status[i] = 1
                             self.attack_building(i,walls,huts,cannons,wizard,th,self.move_x[i],self.move_y[i])

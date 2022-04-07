@@ -1,17 +1,48 @@
 from src.village import Village
-import os
 
-os.system('clear')
+win_level_1 = 0
+win_level_2 = 0
+win_level_3 = 0
 
-print("Choose a level to start the game:\n1 - Easy\n2 - Medium\n3 - Hard\n")
-level = int(input("Enter a number: "))
-if level != 1 and level != 2 and level != 3:
-    print("Invalid level.\n")
-    exit()
-else:
+level = 1
+village = Village(level)
+
+while(True):
+    key = village.get_key()
+    if key == 'c':
+        break
+    elif village.game_result == 0:
+        village.render()
+    else:
+        if village.game_result == 1:
+            win_level_1 = 1
+        else:
+            win_level_1 = 0
+        break
+
+if win_level_1 == 1:
+
+    level = 2
     village = Village(level)
 
-    if village.level != 0:
+    while(True):
+        key = village.get_key()
+        if key == 'c':
+            break
+        elif village.game_result == 0:
+            village.render()
+        else:
+            if village.game_result == 1:
+                win_level_2 = 1
+            else:
+                win_level_2 = 0
+            break
+    
+    if win_level_2 == 1:
+            
+        level = 3
+        village = Village(level)
+    
         while(True):
             key = village.get_key()
             if key == 'c':
@@ -20,4 +51,10 @@ else:
                 village.render()
             else:
                 break
+    
+    else:
+        quit()
+    
+else:
+    quit()
     

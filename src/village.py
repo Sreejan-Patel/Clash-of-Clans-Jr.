@@ -220,85 +220,6 @@ class Village():
             for i in range(hero_len):
                 self.village[hero_y][hero_x+i] = Fore.YELLOW+hero[i]+Style.RESET_ALL
 
-        if self.hero == 1:
-            # render King
-            troop_king = "--King--"
-            troop_king_len = len(troop_king)
-            troop_king_x = (self.cols+self.troops_spells_cols - troop_king_len -7*length)
-            troop_king_y = 5
-            for i in range(troop_king_len):
-                self.village[troop_king_y][troop_king_x+i] = Fore.YELLOW+troop_king[i]+Style.RESET_ALL
-
-            king_health = "Health: "
-            king_health_len = len(king_health)
-            king_health_x = (self.cols+6)
-            king_health_y = 7
-
-            health_bar_len = 10
-            king_health_length = int(self.king.king_health * health_bar_len / 100)
-
-            king_dead = "!!Dead!!"
-            king_dead_len = len(king_dead)
-            king_dead_x = (self.cols+self.troops_spells_cols - troop_king_len -7*length)
-            king_dead_y = 7
-
-
-            if self.king.status == 0:
-                self.village[self.king.y][self.king.x] = self.king.king_color
-            elif self.king.status == 1:
-                self.village[self.king.y][self.king.x] = self.king.king_color
-                for i in range(king_health_len):
-                    self.village[king_health_y][king_health_x+i] = king_health[i]
-                for i in range(health_bar_len):
-                    self.village[king_health_y][king_health_x+i+king_health_len] = Back.BLACK+' '+Style.RESET_ALL
-                for i in range(king_health_length):
-                    self.village[king_health_y][king_health_x+i+king_health_len] = Back.RED+' '+Style.RESET_ALL
-            elif self.king.status == 2:
-                for i in range(king_dead_len):
-                    self.village[king_dead_y][king_dead_x+i] = Fore.RED+king_dead[i]+Style.RESET_ALL
-            
-
-            self.king.king_color = Back.RED+' '+Style.RESET_ALL
-        
-        if self.hero == 2:
-            # render Queen
-            troop_queen = "--Queen--"
-            troop_queen_len = len(troop_queen)
-            troop_queen_x = (self.cols+self.troops_spells_cols - troop_queen_len -7*length)
-            troop_queen_y = 5
-            for i in range(troop_queen_len):
-                self.village[troop_queen_y][troop_queen_x+i] = Fore.YELLOW+troop_queen[i]+Style.RESET_ALL
-
-            queen_health = "Health: "
-            queen_health_len = len(queen_health)
-            queen_health_x = (self.cols+6)
-            queen_health_y = 7
-
-            health_bar_len = 10
-            queen_health_length = int(self.queen.queen_health * health_bar_len / 100)
-
-            queen_dead = "!!Dead!!"
-            queen_dead_len = len(queen_dead)
-            queen_dead_x = (self.cols+self.troops_spells_cols - troop_queen_len -7*length)
-            queen_dead_y = 7
-
-
-            if self.queen.status == 0:
-                self.village[self.queen.y][self.queen.x] = self.queen.queen_color
-            elif self.queen.status == 1:
-                self.village[self.queen.y][self.queen.x] = self.queen.queen_color
-                for i in range(queen_health_len):
-                    self.village[queen_health_y][queen_health_x+i] = queen_health[i]
-                for i in range(health_bar_len):
-                    self.village[queen_health_y][queen_health_x+i+queen_health_len] = Back.BLACK+' '+Style.RESET_ALL
-                for i in range(queen_health_length):
-                    self.village[queen_health_y][queen_health_x+i+queen_health_len] = Back.RED+' '+Style.RESET_ALL
-            elif self.queen.status == 2:
-                for i in range(queen_dead_len):
-                    self.village[queen_dead_y][queen_dead_x+i] = Fore.RED+queen_dead[i]+Style.RESET_ALL
-            
-            self.queen.queen_color = Back.RED+' '+Style.RESET_ALL
-
         # Barbarians Attack
         self.barbarians.move(self.walls, self.huts, self.cannons, self.th, self.wizard_tower)
 
@@ -393,6 +314,84 @@ class Village():
                 elif self.loons.attack_status[counter] == 1:
                     self.village[self.loons.y[counter]][self.loons.x[counter]] = self.loons.attack_color
 
+        if self.hero == 1:
+            # render King
+            troop_king = "--King--"
+            troop_king_len = len(troop_king)
+            troop_king_x = (self.cols+self.troops_spells_cols - troop_king_len -7*length)
+            troop_king_y = 5
+            for i in range(troop_king_len):
+                self.village[troop_king_y][troop_king_x+i] = Fore.YELLOW+troop_king[i]+Style.RESET_ALL
+
+            king_health = "Health: "
+            king_health_len = len(king_health)
+            king_health_x = (self.cols+6)
+            king_health_y = 7
+
+            health_bar_len = 10
+            king_health_length = int(self.king.king_health * health_bar_len / 100)
+
+            king_dead = "!!Dead!!"
+            king_dead_len = len(king_dead)
+            king_dead_x = (self.cols+self.troops_spells_cols - troop_king_len -7*length)
+            king_dead_y = 7
+
+
+            if self.king.status == 0:
+                self.village[self.king.y][self.king.x] = self.king.king_color
+            elif self.king.status == 1:
+                self.village[self.king.y][self.king.x] = self.king.king_color
+                for i in range(king_health_len):
+                    self.village[king_health_y][king_health_x+i] = king_health[i]
+                for i in range(health_bar_len):
+                    self.village[king_health_y][king_health_x+i+king_health_len] = Back.BLACK+' '+Style.RESET_ALL
+                for i in range(king_health_length):
+                    self.village[king_health_y][king_health_x+i+king_health_len] = Back.RED+' '+Style.RESET_ALL
+            elif self.king.status == 2:
+                for i in range(king_dead_len):
+                    self.village[king_dead_y][king_dead_x+i] = Fore.RED+king_dead[i]+Style.RESET_ALL
+            
+
+            self.king.king_color = Back.RED+' '+Style.RESET_ALL
+        
+        if self.hero == 2:
+            # render Queen
+            troop_queen = "--Queen--"
+            troop_queen_len = len(troop_queen)
+            troop_queen_x = (self.cols+self.troops_spells_cols - troop_queen_len -7*length)
+            troop_queen_y = 5
+            for i in range(troop_queen_len):
+                self.village[troop_queen_y][troop_queen_x+i] = Fore.YELLOW+troop_queen[i]+Style.RESET_ALL
+
+            queen_health = "Health: "
+            queen_health_len = len(queen_health)
+            queen_health_x = (self.cols+6)
+            queen_health_y = 7
+
+            health_bar_len = 10
+            queen_health_length = int(self.queen.queen_health * health_bar_len / 100)
+
+            queen_dead = "!!Dead!!"
+            queen_dead_len = len(queen_dead)
+            queen_dead_x = (self.cols+self.troops_spells_cols - troop_queen_len -7*length)
+            queen_dead_y = 7
+
+
+            if self.queen.status == 0:
+                self.village[self.queen.y][self.queen.x] = self.queen.queen_color
+            elif self.queen.status == 1:
+                self.village[self.queen.y][self.queen.x] = self.queen.queen_color
+                for i in range(queen_health_len):
+                    self.village[queen_health_y][queen_health_x+i] = queen_health[i]
+                for i in range(health_bar_len):
+                    self.village[queen_health_y][queen_health_x+i+queen_health_len] = Back.BLACK+' '+Style.RESET_ALL
+                for i in range(queen_health_length):
+                    self.village[queen_health_y][queen_health_x+i+queen_health_len] = Back.RED+' '+Style.RESET_ALL
+            elif self.queen.status == 2:
+                for i in range(queen_dead_len):
+                    self.village[queen_dead_y][queen_dead_x+i] = Fore.RED+queen_dead[i]+Style.RESET_ALL
+            
+            self.queen.queen_color = Back.RED+' '+Style.RESET_ALL
 
         # render Spells
         spells = "----Spells----"
@@ -477,18 +476,45 @@ class Village():
         for i in range(time_elapsed_len):
             self.village[time_elapsed_y][time_elapsed_x+i] = Fore.CYAN+str(self.time_elapsed)[i]+Style.RESET_ALL
 
+        # render level
+        level = "-----Level-----"
+        level_len = len(level)
+        level_x = (self.cols+self.troops_spells_cols - level_len - 4*length)
+        level_y = 35
+        for i in range(level_len):
+            self.village[level_y][level_x+i] = Fore.YELLOW+level[i]+Style.RESET_ALL
+
+        level_len = len(str(self.level))
+        level_y = 37
+        level_x = self.cols+self.troops_spells_cols - 11
+        for i in range(level_len):
+            self.village[level_y][level_x+i] = Fore.CYAN+str(self.level)[i]+Style.RESET_ALL
+
 
         # check for game ending
         check_loss = 0
         for counter in range(10):
             if self.barbarians.status[counter] == 2:
                 check_loss += 1
-        if self.king.status == 2:
-            check_loss += 1
-        
-        check_victory = 0
+        if self.hero == 1:
+            if self.king.status == 2:
+                check_loss += 1
+        elif self.hero == 2:
+            if self.queen.status == 2:
+                check_loss += 1
+        for counter in range(5):
+            if self.archers.status[counter] == 2:
+                check_loss += 1
         for counter in range(2):
+            if self.loons.status[counter] == 2:
+                check_loss += 1
+
+        check_victory = 0
+        for counter in range(self.level+1):
             if self.cannons.health[counter] <= 0:
+                check_victory += 1
+        for counter in range(self.level+1):
+            if self.wizard_tower.health[counter] <= 0:
                 check_victory += 1
         for counter in range(5):
             if self.huts.health[counter] <= 0:
@@ -496,9 +522,11 @@ class Village():
         if self.th.health[0] <= 0:
             check_victory += 1
 
-        if check_loss == 11 and check_victory < 8:
+        victory_requirement = 2*(self.level+1) + 5 + 1
+
+        if check_loss == 18 and check_victory < victory_requirement:
             self.game_result = 2
-        elif check_victory == 8:
+        elif check_victory == victory_requirement:
             self.game_result = 1
 
         if self.game_result == 0:
@@ -589,7 +617,10 @@ class Village():
             f.write('\n'.join([''.join(row) for row in self.village]))
             f.write('\n')
 
-
-        print('\n'.join([''.join(row) for row in self.village]))
+        if self.game_result == 1 or self.game_result == 2:
+            print('\n'.join([''.join(row) for row in self.village]))
+            time.sleep(3)
+        else:
+            print('\n'.join([''.join(row) for row in self.village]))
 
 

@@ -165,7 +165,7 @@ class Cannon(Building):
         '''
         This function calculates the euclidean distance between two points (considering the middle y and x coordinates of the cannon)
         '''
-        return math.sqrt((y1-(y2+1))**2 + (x1-(x2+1))**2)
+        return math.sqrt((y1-(y2))**2 + (x1-(x2))**2)
 
     def cannon_attack_troops(self, hero, king, queen, barbarians):
         '''
