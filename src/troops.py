@@ -891,24 +891,24 @@ class Archers():
             
             if at_least_one == 1:
                 if np.amin(huts_dist) < np.amin(cannons_dist) and np.amin(huts_dist) < th_dist and np.amin(huts_dist) < np.amin(wizard_dist):   
-                    self.move_xx = huts.x[np.argmin(huts_dist)]
-                    self.move_yy = huts.y[np.argmin(huts_dist)]
+                    move_xx = huts.x[np.argmin(huts_dist)]
+                    move_yy = huts.y[np.argmin(huts_dist)]
                 elif np.amin(cannons_dist) < th_dist and np.amin(cannons_dist) < np.amin(wizard_dist):
-                    self.move_xx = cannons.x[np.argmin(cannons_dist)]
-                    self.move_yy = cannons.y[np.argmin(cannons_dist)]
+                    move_xx = cannons.x[np.argmin(cannons_dist)]
+                    move_yy = cannons.y[np.argmin(cannons_dist)]
                 elif np.amin(wizard_dist) < th_dist:
-                    self.move_xx = wizard.x[np.argmin(wizard_dist)]
-                    self.move_yy = wizard.y[np.argmin(wizard_dist)]
+                    move_xx = wizard.x[np.argmin(wizard_dist)]
+                    move_yy = wizard.y[np.argmin(wizard_dist)]
                 else:
-                    self.move_xx = th.x
-                    self.move_yy = th.y 
+                    move_xx = th.x
+                    move_yy = th.y 
             else:
                 pass 
 
             in_range = self.euclidean_distance(self.y[i],self.x[i],move_yy,move_xx)
             if in_range <= self.attack_range:
                 self.attack_status[i] = 1
-                self.attack_building(i,walls,huts,cannons,wizard,th,move_yy,move_xx)
+                self.attack_building(i,walls,huts,cannons,wizard,th,move_xx,move_yy)
                 return
             else:
 
