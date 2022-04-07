@@ -227,23 +227,31 @@ class Barbarians():
             if huts.status[j] == 1:
                 at_least_one = 1
                 huts_dist[j] = self.euclidean_distance(self.y[i],self.x[i],huts.y[j],huts.x[j])
+            else:
+                huts_dist[j] = 100
                     
         th_dist = 100
         if th.status == 1:
             at_least_one = 1
             th_dist = self.euclidean_distance_th(self.y[i],self.x[i],th.y,th.x)
+        else:
+            th_dist = 1000
                     
         cannons_dist = np.full((self.level+1), 100)
         for j in range(self.level+1):
             if cannons.status[j] == 1:
                 at_least_one = 1
                 cannons_dist[j] = self.euclidean_distance_cannons(self.y[i],self.x[i],cannons.y[j],cannons.x[j])
+            else:
+                cannons_dist[j] = 100
 
         wizard_dist = np.full((self.level+1), 100)
         for j in range(self.level+1):
             if wizard.status[j] == 1:
                 at_least_one = 1
                 wizard_dist[j] = self.euclidean_distance_cannons(self.y[i],self.x[i],wizard.y[j],wizard.x[j])
+            else:
+                wizard_dist[j] = 100
         
         
         if at_least_one == 1:
@@ -549,10 +557,11 @@ class Archers():
         self.damage = 5
         self.movement_speed = 1
         self.timer = np.full((5), 0)
-        self.time_to_move = 1
+        self.time_to_move = 0.5
 
         self.attack_status = np.zeros((5), type(int))
         self.attack_color = Back.BLACK+' '+Style.RESET_ALL
+        self.attack_range = 7
 
         self.move_x = np.full((5), -1)
         self.move_y = np.full((5), -1)
@@ -604,6 +613,411 @@ class Archers():
         else:
             return self.archers_color
 
+    def euclidean_distance_th(self, y1, x1, y2, x2):
+        '''
+        This function calculates the euclidean distance between two points (considering the middle y and x coordinates of the th)
+        '''
+        return math.sqrt((y1-(y2+1))**2 + (x1-(x2+1))**2)
+
+    def euclidean_distance_cannons(self, y1, x1, y2, x2):
+        '''
+        This function calculates the euclidean distance between two points (considering the middle y and x coordinates of the cannons)
+        '''
+        return math.sqrt((y1-(y2+1))**2 + (x1-(x2+1))**2)
+    
+    def euclidean_distance(self, y1, x1, y2, x2):
+        '''
+        This function calculates the euclidean distance between two points 
+        '''
+        return math.sqrt((y1-y2)**2 + (x1-x2)**2)
+
+    def check_obstacle(self,i,walls,huts,cannons,wizard,th,prev_y,prev_x):
+        if walls.check_coordinates(self.y[i], self.x[i]) > -1:
+            self.y[i] = prev_y
+            self.x[i] = prev_x
+            return 1
+        elif huts.check_coordinates(self.y[i], self.x[i]) > -1:
+            self.y[i] = prev_y
+            self.x[i] = prev_x
+            return 2
+        elif cannons.check_coordinates(self.y[i], self.x[i]) > -1:
+            self.y[i] = prev_y
+            self.x[i] = prev_x
+            return 3
+        elif th.check_coordinates(self.y[i], self.x[i]) > -1:
+            self.y[i] = prev_y
+            self.x[i] = prev_x
+            return 4
+        elif wizard.check_coordinates(self.y[i], self.x[i]) > -1:
+            self.y[i] = prev_y
+            self.x[i] = prev_x
+            return 5
+        elif Utils.check_border_coordinates(self.y[i], self.x[i]):
+            self.y[i] = prev_y
+            self.x[i] = prev_x
+            return 6
+        else:
+            return 0
+
+    def move_archers(self,i,walls,huts,cannons,wizard,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp):
+            movement = [w,s,a,d,ne,nw,se,sw]
+            movement.sort()
+
+            for j in range(len(movement)):
+                if movement[j] == w:
+                    self.y[i] -= self.movement_speed
+                    check = self.check_obstacle(i,walls,huts,cannons,wizard,th,prev_y,prev_x)
+                    if check == 1 and temp == 1:
+                        self.attack_wall(i,walls)
+                        break
+                    elif check > 0:
+                        continue
+                    else:
+                        break
+                elif movement[j] == s:
+                    self.y[i] += self.movement_speed
+                    check = self.check_obstacle(i,walls,huts,cannons,wizard,th,prev_y,prev_x)
+                    if check == 1 and temp == 1:
+                        self.attack_wall(i,walls)
+                        break
+                    elif check > 0:
+                        continue
+                    else:
+                        break
+                elif movement[j] == a:
+                    self.x[i] -= self.movement_speed
+                    check = self.check_obstacle(i,walls,huts,cannons,wizard,th,prev_y,prev_x)
+                    if check == 1 and temp == 1:
+                        self.attack_wall(i,walls)
+                        break
+                    elif check > 0:
+                        continue
+                    else:
+                        break
+                elif movement[j] == d:
+                    self.x[i] += self.movement_speed
+                    check = self.check_obstacle(i,walls,huts,cannons,wizard,th,prev_y,prev_x)
+                    if check == 1 and temp == 1:
+                        self.attack_wall(i,walls)
+                        break
+                    elif check > 0:
+                        continue
+                    else:
+                        break
+                elif movement[j] == ne:
+                    self.y[i] -= self.movement_speed
+                    self.x[i] += self.movement_speed
+                    check = self.check_obstacle(i,walls,huts,cannons,wizard,th,prev_y,prev_x)
+                    if check == 1 and temp == 1:
+                        self.attack_wall(i,walls)
+                        break
+                    elif check > 0:
+                        continue
+                    else:
+                        break
+                elif movement[j] == nw:
+                    self.y[i] -= self.movement_speed
+                    self.x[i] -= self.movement_speed
+                    check = self.check_obstacle(i,walls,huts,cannons,wizard,th,prev_y,prev_x)
+                    if check == 1 and temp == 1:
+                        self.attack_wall(i,walls)
+                        break
+                    elif check > 0:
+                        continue
+                    else: 
+                        break
+                elif movement[j] == se:
+                    self.y[i] += self.movement_speed
+                    self.x[i] += self.movement_speed
+                    check = self.check_obstacle(i,walls,huts,cannons,wizard,th,prev_y,prev_x)
+                    if check == 1 and temp == 1:
+                        self.attack_wall(i,walls)
+                        break
+                    elif check > 0:
+                        continue
+                    else: 
+                        break
+                elif movement[j] == sw:
+                    self.y[i] += self.movement_speed
+                    self.x[i] -= self.movement_speed
+                    check = self.check_obstacle(i,walls,huts,cannons,wizard,th,prev_y,prev_x)
+                    if check == 1 and temp == 1:
+                        self.attack_wall(i,walls)
+                        break
+                    elif check > 0:
+                        continue
+                    else: 
+                        break
+                else:
+                    pass
+
+    def nearest_building(self,i,huts,cannons,th,wizard):
+        at_least_one = 0
+        huts_dist = np.full((5), 100)
+        for j in range(5):
+            if huts.status[j] == 1:
+                at_least_one = 1
+                huts_dist[j] = self.euclidean_distance(self.y[i],self.x[i],huts.y[j],huts.x[j])
+            else:
+                huts_dist[j] = 1000
+                    
+        th_dist = 100
+        if th.status == 1:
+            at_least_one = 1
+            th_dist = self.euclidean_distance_th(self.y[i],self.x[i],th.y,th.x)
+        else:
+            th_dist = 1000
+                    
+        cannons_dist = np.full((self.level+1), 100)
+        for j in range(self.level+1):
+            if cannons.status[j] == 1:
+                at_least_one = 1
+                cannons_dist[j] = self.euclidean_distance_cannons(self.y[i],self.x[i],cannons.y[j],cannons.x[j])
+            else:
+                cannons_dist[j] = 1000
+
+        wizard_dist = np.full((self.level+1), 100)
+        for j in range(self.level+1):
+            if wizard.status[j] == 1:
+                at_least_one = 1
+                wizard_dist[j] = self.euclidean_distance_cannons(self.y[i],self.x[i],wizard.y[j],wizard.x[j])
+            else:
+                wizard_dist[j] = 1000
+        
+        
+        if at_least_one == 1:
+            if np.amin(huts_dist) < np.amin(cannons_dist) and np.amin(huts_dist) < th_dist and np.amin(huts_dist) < np.amin(wizard_dist):   
+                self.move_x[i] = huts.x[np.argmin(huts_dist)]
+                self.move_y[i] = huts.y[np.argmin(huts_dist)]
+            elif np.amin(cannons_dist) < th_dist and np.amin(cannons_dist) < np.amin(wizard_dist):
+                self.move_x[i] = cannons.x[np.argmin(cannons_dist)]
+                self.move_y[i] = cannons.y[np.argmin(cannons_dist)]
+            elif np.amin(wizard_dist) < th_dist:
+                self.move_x[i] = wizard.x[np.argmin(wizard_dist)]
+                self.move_y[i] = wizard.y[np.argmin(wizard_dist)]
+            else:
+                self.move_x[i] = th.x
+                self.move_y[i] = th.y 
+        else:
+            pass 
+
+    def move(self,walls,huts,cannons,wizard,th):
+        ''''Moving Archers'''
+        for i in range(5):
+            self.attack_status[i] = 0
+        for i in range(5):
+            if self.status[i] == 1:
+                if time.time() - self.timer[i] >= self.time_to_move:
+                    self.timer[i] = time.time()
+                    # first check if the troop is in the same position as the nearest broken wall , if not move there
+                    is_wall = np.zeros((114), type(int))
+                    is_protected = True
+                    if self.entered[i] == 0:
+                        for j in range(114):
+                            if walls.health[j] <= 0:
+                                is_wall[j] = 1
+                                is_protected = False
+                    elif self.entered[i] == 1:
+                        temp = 0
+                        self.nearest_building(i,huts,cannons,th,wizard)
+                        in_range = self.euclidean_distance(self.y[i],self.x[i],self.move_y[i],self.move_x[i])
+                        print(in_range)
+                        if in_range <= self.attack_range:
+                            self.attack_status[i] = 1
+                            self.attack_building(i,walls,huts,cannons,wizard,th,self.move_x[i],self.move_y[i])
+                            continue
+                        else:
+                            self.move_towards_nearest_building(i,walls,huts,cannons,th,wizard,temp)
+
+                    walls_dist = np.full((114), 100)
+                    for j in range(114):
+                        walls_dist[j] = self.euclidean_distance(self.y[i], self.x[i], walls.y[j], walls.x[j])
+
+                    # if no wall is broken, move towards the nearest building
+                    if is_protected == True:
+                        temp = 1
+                        self.nearest_building(i,huts,cannons,th,wizard)
+                        in_range = self.euclidean_distance(self.y[i],self.x[i],self.move_y[i],self.move_x[i])
+                        if in_range <= self.attack_range:
+                            self.attack_status[i] = 1
+                            self.attack_building(i,walls,huts,cannons,wizard,th,self.move_x[i],self.move_y[i])
+                            continue
+                        else: 
+                            self.move_towards_nearest_building(i,walls,huts,cannons,th,wizard,temp)
+                    
+                    elif is_protected == False and self.entered[i] == 0:
+                        wall_dist_min = 100
+                        for j in range(114):
+                            if is_wall[j] == 1:
+                                if walls_dist[j] < wall_dist_min:
+                                    wall_dist_min = walls_dist[j]
+                                    self.move_x[i] = walls.x[j]
+                                    self.move_y[i] = walls.y[j]
+                        self.move_towards_wall_open(i,self.move_y[i],self.move_x[i],walls,huts,cannons,wizard,th)
+
+    def move_towards_wall_open(self,i,y,x,walls,huts,cannons,wizard,th):
+        """Move Towards Wall Open"""
+        if self.y[i] == y  and self.x[i] == x and self.health[i] > 0:
+            self.entered[i] = 1
+        else:
+            # finding the nearest building
+
+            move_xx = 0
+            move_yy = 0
+
+            at_least_one = 0
+            huts_dist = np.full((5), 100)
+            for j in range(5):
+                if huts.status[j] == 1:
+                    at_least_one = 1
+                    huts_dist[j] = self.euclidean_distance(self.y[i],self.x[i],huts.y[j],huts.x[j])
+                        
+            th_dist = 100
+            if th.status == 1:
+                at_least_one = 1
+                th_dist = self.euclidean_distance_th(self.y[i],self.x[i],th.y,th.x)
+                        
+            cannons_dist = np.full((self.level+1), 100)
+            for j in range(self.level+1):
+                if cannons.status[j] == 1:
+                    at_least_one = 1
+                    cannons_dist[j] = self.euclidean_distance_cannons(self.y[i],self.x[i],cannons.y[j],cannons.x[j])
+
+            wizard_dist = np.full((self.level+1), 100)
+            for j in range(self.level+1):
+                if wizard.status[j] == 1:
+                    at_least_one = 1
+                    wizard_dist[j] = self.euclidean_distance_cannons(self.y[i],self.x[i],wizard.y[j],wizard.x[j])
+            
+            
+            if at_least_one == 1:
+                if np.amin(huts_dist) < np.amin(cannons_dist) and np.amin(huts_dist) < th_dist and np.amin(huts_dist) < np.amin(wizard_dist):   
+                    self.move_xx = huts.x[np.argmin(huts_dist)]
+                    self.move_yy = huts.y[np.argmin(huts_dist)]
+                elif np.amin(cannons_dist) < th_dist and np.amin(cannons_dist) < np.amin(wizard_dist):
+                    self.move_xx = cannons.x[np.argmin(cannons_dist)]
+                    self.move_yy = cannons.y[np.argmin(cannons_dist)]
+                elif np.amin(wizard_dist) < th_dist:
+                    self.move_xx = wizard.x[np.argmin(wizard_dist)]
+                    self.move_yy = wizard.y[np.argmin(wizard_dist)]
+                else:
+                    self.move_xx = th.x
+                    self.move_yy = th.y 
+            else:
+                pass 
+
+            in_range = self.euclidean_distance(self.y[i],self.x[i],move_yy,move_xx)
+            if in_range <= self.attack_range:
+                self.attack_status[i] = 1
+                self.attack_building(i,walls,huts,cannons,wizard,th,move_yy,move_xx)
+                return
+            else:
+
+
+                self.entered[i] = 0
+                w = self.euclidean_distance(self.y[i]-1,self.x[i],y,x)
+                s = self.euclidean_distance(self.y[i]+1,self.x[i],y,x)
+                a = self.euclidean_distance(self.y[i],self.x[i]-1,y,x)
+                d = self.euclidean_distance(self.y[i],self.x[i]+1,y,x)
+                ne = self.euclidean_distance(self.y[i]-1,self.x[i]+1,y,x)
+                nw = self.euclidean_distance(self.y[i]-1,self.x[i]-1,y,x)
+                se = self.euclidean_distance(self.y[i]+1,self.x[i]+1,y,x)
+                sw = self.euclidean_distance(self.y[i]+1,self.x[i]-1,y,x)
+                
+
+                prev_x = self.x[i]
+                prev_y = self.y[i]
+                temp = 0
+                self.move_archers(i,walls,huts,cannons,wizard,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp)
+
+    
+    def move_towards_nearest_building(self,i,walls,huts,cannons,th,wizard,temp):
+        """Move Towards Nearest Building"""
+ 
+        w = self.euclidean_distance(self.y[i]-1,self.x[i],self.move_y[i],self.move_x[i])
+        s = self.euclidean_distance(self.y[i]+1,self.x[i],self.move_y[i],self.move_x[i])
+        a = self.euclidean_distance(self.y[i],self.x[i]-1,self.move_y[i],self.move_x[i])
+        d = self.euclidean_distance(self.y[i],self.x[i]+1,self.move_y[i],self.move_x[i])
+        ne = self.euclidean_distance(self.y[i]-1,self.x[i]+1,self.move_y[i],self.move_x[i])
+        nw = self.euclidean_distance(self.y[i]-1,self.x[i]-1,self.move_y[i],self.move_x[i])
+        se = self.euclidean_distance(self.y[i]+1,self.x[i]+1,self.move_y[i],self.move_x[i])
+        sw = self.euclidean_distance(self.y[i]+1,self.x[i]-1,self.move_y[i],self.move_x[i])
+            
+
+        prev_x = self.x[i]
+        prev_y = self.y[i]
+        self.move_archers(i,walls,huts,cannons,wizard,th,prev_y,prev_x,w,s,a,d,ne,nw,se,sw,temp)   
+
+    def attack_building(self,i,walls,huts,cannons,wizard,th,move_x,move_y):
+
+        for j in range(5):
+            if huts.status[j] == 1:
+                if huts.x[j] == move_x and huts.y[j] == move_y:
+                    huts.health_decrease(j,self.damage)
+                    return
+
+        for j in range(self.level+1):
+            if cannons.status[j] == 1:
+                if cannons.x[j] == move_x and cannons.y[j] == move_y:
+                    cannons.health_decrease(j,self.damage)
+                    return
+        
+        for j in range(self.level+1):
+            if wizard.status[j] == 1:
+                if wizard.x[j] == move_x and wizard.y[j] == move_y:
+                    wizard.health_decrease(j,self.damage)
+                    return
+
+        for j in range(1):
+            if th.status == 1:
+                if th.x == move_x and th.y == move_y:
+                    th.health_decrease(self.damage)
+                    return
+
+    def attack_wall(self,i,walls):
+        """Attacking."""
+
+        wall_l = walls.check_coordinates(self.y[i], self.x[i]-1)
+        wall_r = walls.check_coordinates(self.y[i], self.x[i]+1)
+        wall_u = walls.check_coordinates(self.y[i]-1, self.x[i])
+        wall_d = walls.check_coordinates(self.y[i]+1, self.x[i])
+        wall_ne = walls.check_coordinates(self.y[i]-1, self.x[i]+1)
+        wall_nw = walls.check_coordinates(self.y[i]-1, self.x[i]-1)
+        wall_se = walls.check_coordinates(self.y[i]+1, self.x[i]+1)
+        wall_sw = walls.check_coordinates(self.y[i]+1, self.x[i]-1)
+            
+        if wall_l != -1:
+            walls.health_decrease(wall_l, self.damage)
+            self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
+        elif wall_r != -1:
+            walls.health_decrease(wall_r, self.damage)
+            self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
+        elif wall_u != -1:
+            walls.health_decrease(wall_u, self.damage)
+            self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
+        elif wall_d != -1:
+            walls.health_decrease(wall_d, self.damage)
+            self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
+        elif wall_ne != -1:
+            walls.health_decrease(wall_ne, self.damage)
+            self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
+        elif wall_nw != -1:
+            walls.health_decrease(wall_nw, self.damage)
+            self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
+        elif wall_se != -1:
+            walls.health_decrease(wall_se, self.damage)
+            self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
+        elif wall_sw != -1:
+            walls.health_decrease(wall_sw, self.damage)
+            self.attack_status[i] = 1
+            os.system('afplay sounds/barb_attack.wav &')
 
 class Loons():
 

@@ -322,8 +322,8 @@ class Village():
                 elif self.barbarians.attack_status[counter] == 1:
                     self.village[self.barbarians.y[counter]][self.barbarians.x[counter]] = self.barbarians.attack_color
 
-        # # Archers attack
-        # self.archers.move(self.walls, self.huts, self.cannons, self.th)
+        # Archers attack
+        self.archers.move(self.walls, self.huts, self.cannons,self.wizard_tower, self.th)
 
         # render Archers
         troop_archer = "--Archer--"
