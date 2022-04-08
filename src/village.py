@@ -543,19 +543,19 @@ class Village():
                     if self.queen.queen_dir == 1:
                         attack_y = self.queen.eagle_attack_y - 16
                         attack_x = self.queen.eagle_attack_x
-                        self.queen.attack(self.walls, self.huts, self.cannons, self.th, attack_y, attack_x)
+                        self.queen.attack(self.walls, self.huts, self.cannons, self.wizard_tower, self.th, attack_y, attack_x)
                     elif self.queen.queen_dir == 2:
                         attack_y = self.queen.eagle_attack_y
                         attack_x = self.queen.eagle_attack_x - 16
-                        self.queen.attack(self.walls, self.huts, self.cannons, self.th, attack_y, attack_x)
+                        self.queen.attack(self.walls, self.huts, self.cannons, self.wizard_tower, self.th, attack_y, attack_x)
                     elif self.queen.queen_dir == 3:
                         attack_y = self.queen.eagle_attack_y + 16
                         attack_x = self.queen.eagle_attack_x
-                        self.queen.attack(self.walls, self.huts, self.cannons, self.th, attack_y, attack_x)
+                        self.queen.attack(self.walls, self.huts, self.cannons, self.wizard_tower, self.th, attack_y, attack_x)
                     elif self.queen.queen_dir == 4:
                         attack_y = self.queen.eagle_attack_y
                         attack_x = self.queen.eagle_attack_x + 16 
-                        self.queen.attack(self.walls, self.huts, self.cannons, self.th, attack_y, attack_x)
+                        self.queen.attack(self.walls, self.huts, self.cannons, self.wizard_tower, self.th, attack_y, attack_x)
                     self.queen.attack_eagle = 0
                     self.queen.eagle_timer = 0
                     self.queen.eagle_attack_x = 0
