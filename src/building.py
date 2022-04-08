@@ -93,6 +93,8 @@ class Cannon(Building):
         self.cannon_time = [time.time(),time.time(),time.time(),time.time(),time.time()]
         self.cannon_attacking = [0,0,0,0,0]
         self.cannon_ticks = [0,0,0,0,0]
+        self.cannon_attack_barb = [0,0,0,0,0]
+        self.cannon_attack_archer = [0,0,0,0,0]
 
         self.attack_status = np.full((5), 0)
         self.attack_color = Back.BLACK+' '+Style.RESET_ALL
@@ -167,7 +169,7 @@ class Cannon(Building):
         '''
         return math.sqrt((y1-(y2))**2 + (x1-(x2))**2)
 
-    def cannon_attack_troops(self, hero, king, queen, barbarians):
+    def cannon_attack_troops(self, hero, king, queen, barbarians, archers):
         '''
         This function attacks the troops of the enemy
         '''
@@ -188,26 +190,48 @@ class Cannon(Building):
             else:
                 hero_dist = 1000
             
-            troop_dist = np.full((10),100)
+            barb_dist = np.full((10),100)
             for j in range(10):
                 if barbarians.status[j] == 1:
-                    troop_dist[j] = troop_dist[j] = self.euclidean_distance(barbarians.y[j], barbarians.x[j], self.y[i], self.x[i])
+                    barb_dist[j] = barb_dist[j] = self.euclidean_distance(barbarians.y[j], barbarians.x[j], self.y[i], self.x[i])
                 else:
-                    troop_dist[j] = 1000
+                    barb_dist[j] = 1000
+
+            arch_dist = np.full((5),100)
+            for j in range(5):
+                if archers.status[j] == 1:
+                    arch_dist[j] = self.euclidean_distance(archers.y[j], archers.x[j], self.y[i], self.x[i])
+                else:
+                    arch_dist[j] = 1000
             
             if self.cannon_attack[i] == -1:
-                min_troop_dist = np.min(troop_dist)
-                if min_troop_dist < hero_dist:
-                    if barbarians.status[np.argmin(troop_dist)] == 1:
+
+                if np.amin(barb_dist) < np.amin(arch_dist) and np.amin(barb_dist) < hero_dist:
+                    if barbarians.status[np.argmin(barb_dist)] == 1:
                         self.cannon_time[i] = 0
                         self.cannon_attacking[i] = 1
-                        self.cannon_attack[i] = np.argmin(troop_dist)
+                        self.cannon_attack[i] = np.argmin(barb_dist)
                         self.cannon_ticks[i] = 0
+                        self.cannon_attack_barb[i] = 1
                     else:
                         self.cannon_time[i] = 0
                         self.cannon_attacking[i] = 0
                         self.cannon_attack[i] = -1
                         self.cannon_ticks[i] = 0
+                        self.cannon_attack_barb[i] = 0
+                elif np.amin(arch_dist) < hero_dist:
+                    if archers.status[np.argmin(arch_dist)] == 1:
+                        self.cannon_time[i] = 0
+                        self.cannon_attacking[i] = 1
+                        self.cannon_attack[i] = np.argmin(arch_dist)
+                        self.cannon_ticks[i] = 0
+                        self.cannon_attack_archer[i] = 1
+                    else:
+                        self.cannon_time[i] = 0
+                        self.cannon_attacking[i] = 0
+                        self.cannon_attack[i] = -1
+                        self.cannon_ticks[i] = 0
+                        self.cannon_attack_archer[i] = 0
                 else:
                     if hero == 1:
                         if king.status == 1:
@@ -275,29 +299,57 @@ class Cannon(Building):
                             self.cannon_time[i] = 0
 
             else:
-                for j in range(10):
+                if self.cannon_attack_barb[i] == 1:
+                    for j in range(10):
 
-                    if self.cannon_attack[i] == j:
-                        if barbarians.status[j] == 1:
-                            troop_dist[j] = self.euclidean_distance(barbarians.y[j],barbarians.x[j],self.y[i],self.x[i])
-                            if troop_dist[j] <= self.range:
-                                    if math.floor(time.time() - self.cannon_time[i]) == self.cannon_ticks[i]:
-                                        self.attack_status[i] = 1
-                                        self.cannon_ticks[i] +=1
-                                        barbarians.health[j] -= self.damage
-                                        if barbarians.health[j] <= 0:
-                                            barbarians.status[j] = 2
-                                            self.cannon_attack[i] = -1
-                                            self.cannon_attacking[i] = 0
-                                            self.cannon_ticks[i] = 0
-                                            self.cannon_time[i] = 0
-                            else:
-                                self.cannon_attack[i] = -1
-                                self.cannon_attacking[i] = 0
-                                self.cannon_ticks[i] = 0
-                                self.cannon_time[i] = 0
-                    else:
-                        continue
+                        if self.cannon_attack[i] == j:
+                            if barbarians.status[j] == 1:
+                                barb_dist[j] = self.euclidean_distance(barbarians.y[j],barbarians.x[j],self.y[i],self.x[i])
+                                if barb_dist[j] <= self.range:
+                                        if math.floor(time.time() - self.cannon_time[i]) == self.cannon_ticks[i]:
+                                            self.attack_status[i] = 1
+                                            self.cannon_ticks[i] +=1
+                                            barbarians.health[j] -= self.damage
+                                            if barbarians.health[j] <= 0:
+                                                barbarians.status[j] = 2
+                                                self.cannon_attack[i] = -1
+                                                self.cannon_attacking[i] = 0
+                                                self.cannon_ticks[i] = 0
+                                                self.cannon_time[i] = 0
+                                                self.cannon_attack_barb[i] = 0
+                                else:
+                                    self.cannon_attack[i] = -1
+                                    self.cannon_attacking[i] = 0
+                                    self.cannon_ticks[i] = 0
+                                    self.cannon_time[i] = 0
+                                    self.cannon_attack_barb[i] = 0
+                        else:
+                            continue
+                elif self.cannon_attack_archer[i] == 1:
+                    for j in range(10):
+                        if self.cannon_attack[i] == j:
+                            if archers.status[j] == 1:
+                                arch_dist[j] = self.euclidean_distance(archers.y[j],archers.x[j],self.y[i],self.x[i])
+                                if arch_dist[j] <= self.range:
+                                        if math.floor(time.time() - self.cannon_time[i]) == self.cannon_ticks[i]:
+                                            self.attack_status[i] = 1
+                                            self.cannon_ticks[i] +=1
+                                            archers.health[j] -= self.damage
+                                            if archers.health[j] <= 0:
+                                                archers.status[j] = 2
+                                                self.cannon_attack[i] = -1
+                                                self.cannon_attacking[i] = 0
+                                                self.cannon_ticks[i] = 0
+                                                self.cannon_time[i] = 0
+                                                self.cannon_attack_archer[i] = 0
+                                else:
+                                    self.cannon_attack[i] = -1
+                                    self.cannon_attacking[i] = 0
+                                    self.cannon_ticks[i] = 0
+                                    self.cannon_time[i] = 0
+                                    self.cannon_attack_archer[i] = 0
+                        else:
+                            continue
 
 class WizardTower(Building):
 
@@ -507,7 +559,7 @@ class WizardTower(Building):
                             self.wizard_attack[i] = -1
                             self.wizard_ticks[i] = 0
             
-            if self.wizard_attack[i] == 69:
+            elif self.wizard_attack[i] == 69:
                 if hero == 1:
                     if king.status == 1:
                         king_dist = self.euclidean_distance(king.y,king.x,self.y[i],self.x[i])

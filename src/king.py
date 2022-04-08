@@ -2,7 +2,7 @@ from colorama import Fore, Style, Back
 import numpy as np
 import os
 import math
-from src.utlis import Utils
+from src.utils import Utils
 
 class King():
     

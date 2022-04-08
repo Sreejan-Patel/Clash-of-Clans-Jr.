@@ -264,7 +264,7 @@ class Village():
                     self.village[self.archers.y[counter]][self.archers.x[counter]] = self.archers.attack_color
 
         # Cannon attack
-        self.cannons.cannon_attack_troops(self.hero, self.king, self.queen, self.barbarians)
+        self.cannons.cannon_attack_troops(self.hero, self.king, self.queen, self.barbarians, self.archers)
                     
         # render Cannons
         for i in range(self.level + 1):
