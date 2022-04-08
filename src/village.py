@@ -420,7 +420,11 @@ class Village():
                 self.queen.queen_attack_damage = self.queen.queen_attack_damage * 2
                 self.queen.queen_movement_speed = self.queen.queen_movement_speed * 2
             self.barbarians.damage = self.barbarians.damage * 2
-            self.barbarians.time_to_move = 0.5
+            self.barbarians.time_to_move = 1
+            self.archers.damage = self.archers.damage * 2
+            self.archers.time_to_move = 0.5
+            self.loons.damage = self.loons.damage * 2
+            self.loons.time_to_move = 0.5
             os.system('afplay sounds/rage.wav -t 5 &')
             self.rage.status_rage = 2
         elif self.rage.status_rage == 2:
@@ -432,8 +436,12 @@ class Village():
                 if self.queen.status == 1 or self.queen.queen_movement_speed == 2:
                     self.queen.queen_attack_damage = self.queen.queen_attack_damage // 2
                     self.queen.queen_movement_speed = self.queen.queen_movement_speed // 2
-                self.barbarians.time_to_move = 1
+                self.barbarians.time_to_move = 2
                 self.barbarians.damage = self.barbarians.damage // 2
+                self.archers.time_to_move = 1
+                self.archers.damage = self.archers.damage // 2
+                self.loons.time_to_move = 1
+                self.loons.damage = self.loons.damage // 2
 
 
 
@@ -456,6 +464,13 @@ class Village():
             for counter in range(10):
                 if self.barbarians.status[counter] == 1:
                     self.barbarians.health_increase_heal(counter)
+            for counter in range(5):
+                if self.archers.status[counter] == 1:
+                    self.archers.health_increase_heal(counter)
+            for counter in range(2):
+                if self.loons.status[counter] == 1:
+                    self.loons.health_increase_heal(counter)
+
             os.system('afplay sounds/heal.wav -t 1 &')
             self.heal.status_heal = 2
         elif self.heal.status_heal == 2:

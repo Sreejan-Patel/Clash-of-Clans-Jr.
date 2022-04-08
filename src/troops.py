@@ -613,6 +613,12 @@ class Archers():
         else:
             return self.archers_color
 
+    def health_increase_heal(self,i):
+        """Increase barbarians's health"""
+        self.health[i] = 1.5 * self.health[i]   # heal 150% times
+        if self.health[i] > 15:
+            self.health[i] = 15
+
     def euclidean_distance_th(self, y1, x1, y2, x2):
         '''
         This function calculates the euclidean distance between two points (considering the middle y and x coordinates of the th)
@@ -1085,6 +1091,12 @@ class Loons():
             return self.loons_color_low_health
         else:
             return self.loons_color
+
+    def health_increase_heal(self,i):
+        """Increase barbarians's health"""
+        self.health[i] = 1.5 * self.health[i]   # heal 150% times
+        if self.health[i] > 30:
+            self.health[i] = 30
 
     def euclidean_distance_th(self, y1, x1, y2, x2):
         '''
