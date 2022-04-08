@@ -280,7 +280,7 @@ class Village():
                         self.village[row][col] = self.cannons.health_check(i)
 
         # wizard attack
-        self.wizard_tower.wizard_attack_troops(self.hero, self.king, self.queen, self.barbarians)
+        self.wizard_tower.wizard_attack_troops(self.hero, self.king, self.queen, self.barbarians, self.archers, self.loons)
 
         # render Wizard Towers
         for i in range(self.level + 1):
