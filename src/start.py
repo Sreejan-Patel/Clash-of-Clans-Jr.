@@ -72,7 +72,13 @@ class Start():
                         break
             
             else:
+                os.system('clear')
+                print("\t\t\t\t\t\t\t\tYou Lose!!!")
+                time.sleep(2)
                 quit()
             
         else:
+            os.system('clear')
+            print("\t\t\t\t\t\t\t\tYou Lose!!!")
+            time.sleep(2)
             quit()
