@@ -266,7 +266,8 @@ class Queen():
         
     def attack(self, walls, huts, cannons, wizard, th, attack_y, attack_x):
         """Attacking."""
-        self.queen_color = Back.BLACK+' '+Style.RESET_ALL
+        if self.attack_eagle == 0:
+            self.queen_color = Back.BLACK+' '+Style.RESET_ALL
 
         wall_euclidian_distance = np.full(114, np.inf)
         for i in range(114):

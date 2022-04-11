@@ -137,6 +137,7 @@ class Village():
         if(key == 'e'):
             if self.queen.status == 1:
                 if self.queen.attack_eagle == 0:
+                    self.queen.queen_color = Back.BLACK+' '+Style.RESET_ALL
                     self.queen.attack_eagle = 1
                     self.queen.eagle_timer = time.time()
                     self.queen.eagle_attack_x = self.queen.x
