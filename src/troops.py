@@ -290,6 +290,7 @@ class Barbarians():
                         temp = 0
                         self.nearest_building(i,huts,cannons,th,wizard)
                         self.move_towards_nearest_building(i,walls,huts,cannons,th,wizard,temp)
+                        continue
                             
 
                     walls_dist = np.full((114), 100)

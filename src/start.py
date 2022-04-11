@@ -11,7 +11,7 @@ class Start():
         '''
         os.system('afplay sounds/intro.wav -t 5 &')
         os.system("clear")
-        print("\t\t\t\t\t\tWelcome to the Clash of Clans Jr.!")
+        print("\t\t\t\t\t\tWelcome to Clash of Clans Jr.!")
         time.sleep(5)
 
     @staticmethod
@@ -69,16 +69,31 @@ class Start():
                     elif village.game_result == 0:
                         village.render()
                     else:
-                        break
+                        if village.game_result == 1:
+                            win_level_3 = 1
+                        else:
+                            win_level_3 = 0
+                            break
+
+                if win_level_3 == 1:
+                    os.system('clear')
+                    print("\n\n\n\n\t\t\t\t\t\t\tYou Win!!!")
+                    time.sleep(2)
+                    quit()
+                else:
+                    os.system('clear')
+                    print("\n\n\n\n\t\t\t\t\t\t\tYou Lose!!!")
+                    time.sleep(2)
+                    quit()
             
             else:
                 os.system('clear')
-                print("\t\t\t\t\t\t\t\tYou Lose!!!")
+                print("\n\n\n\n\t\t\t\t\t\t\tYou Lose!!!")
                 time.sleep(2)
                 quit()
             
         else:
             os.system('clear')
-            print("\t\t\t\t\t\t\t\tYou Lose!!!")
+            print("\n\n\n\n\t\t\t\t\t\t\tYou Lose!!!")
             time.sleep(2)
             quit()
